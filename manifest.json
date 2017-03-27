@@ -1,0 +1,36 @@
+{
+    "background": {
+        "page": "background.html"
+    },
+    "options_page": "options.html",
+    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+    "description": "ChromeScripts",
+    "icons": {
+        "128": "icon.png",
+        "48" : "icon.png",
+        "16" : "icon.png"
+    },
+    "manifest_version": 2,
+    "name": "ChromeScripts",
+
+    "content_scripts": [
+        {
+            "matches": ["<all_urls>"],
+            "css": [
+            ],
+            "js": [
+                "libs/jquery.js"
+            ],
+            "run_at": "document_end"
+        }
+    ],
+
+    "permissions": [
+        "contextMenus",
+        "tabs",
+        "activeTab",
+        "<all_urls>"
+    ],
+
+    "version": "0.1.1"
+}
