@@ -1,10 +1,11 @@
 (function () {
     window.addEventListener('click', function (e) {
-        if (e.target.className.indexOf('wk-daylink') === -1) return;
+        if (e.target.className.indexOf('wk-dayname') === -1) return;
+        var daylink = e.target.querySelector('.wk-daylink');
 
         // GoogleCalendarに強く依存してる
         var year = document.getElementById('currentDate:1').innerText.match(/\d{4}/);
-        var d = e.target.innerText.split('/');
+        var d = daylink.innerText.split('/');
         if (year === null || d.length < 2) return;
 
         var day = d[1].match(/\(.+?\)/);
