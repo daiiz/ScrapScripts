@@ -21,14 +21,14 @@
             "js": [
                 "./libs/jquery.js"
             ],
-            "run_at": "document_end"
+            "run_at": "document_start"
         },
         {
             "matches": ["*://calendar.google.com/calendar/render"],
             "js": [
                 "scripts/google-calendar/main.js"
             ],
-            "run_at": "document_idle"
+            "run_at": "document_start"
         }
     ],
 

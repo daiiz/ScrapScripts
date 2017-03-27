@@ -1,8 +1,10 @@
-$(function () {
-    $('.wk-daylink').on('click', function (e) {
+(function () {
+    window.addEventListener('click', function (e) {
+        if (e.target.className.indexOf('wk-daylink') === -1) return;
+
         // GoogleCalendarに強く依存してる
-        var year = $('title').text().match(/\d{4}/);
-        var d = $(e.target).text().split('/');
+        var year = document.getElementById('currentDate:1').innerText.match(/\d{4}/);
+        var d = e.target.innerText.split('/');
         if (year === null || d.length < 2) return;
 
         var day = d[1].match(/\(.+?\)/);
@@ -21,7 +23,7 @@ $(function () {
             '#' + month + '月',
             '#' + day + '曜日'
         ];
-        console.warn(tags);
+
         /****** 編集エリア ******/
         // ScrapboxプロジェクトID
         var scrapboxProject = 'daiiz-private';
@@ -36,10 +38,8 @@ $(function () {
         // Scrapboxページを開く
         var scrapboxUrl = 'https://scrapbox.io/' + scrapboxProject + '/' +
             encodeURIComponent(title);
-        // body = encodeURIComponent(body);
-        console.log(scrapboxUrl + '?body=' + body);
-        window.open(scrapboxUrl + '?body=' + body);
 
-        return false;
-    });
-});
+        window.open(scrapboxUrl + '?body=' + body);
+        e.stopPropagation();
+    }, false);
+})();
