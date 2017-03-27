@@ -19,9 +19,16 @@
             "css": [
             ],
             "js": [
-                "libs/jquery.js"
+                "./libs/jquery.js"
             ],
             "run_at": "document_end"
+        },
+        {
+            "matches": ["*://calendar.google.com/calendar/render"],
+            "js": [
+                "scripts/google-calendar/main.js"
+            ],
+            "run_at": "document_idle"
         }
     ],
 
