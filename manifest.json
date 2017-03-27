@@ -19,12 +19,15 @@
             "css": [
             ],
             "js": [
-                "./libs/jquery.js"
+                "libs/jquery.js"
             ],
             "run_at": "document_start"
         },
         {
             "matches": ["*://calendar.google.com/calendar/render"],
+            "css": [
+                "scripts/google-calendar/main.css"
+            ],
             "js": [
                 "scripts/google-calendar/main.js"
             ],
