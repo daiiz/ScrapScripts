@@ -1,4 +1,17 @@
 (function () {
+    var diffDate = function (date, diff) {
+      // date: '1993-09-11'
+      // diff: +1, -1
+      var d = new Date(date);
+      d.setDate(d.getDate() + diff);
+      var a = [
+        d.getFullYear(),
+        ('00' + (1 + d.getMonth())).slice(-2),
+        ('00' + d.getDate()).slice(-2)
+      ];
+      return a.join('-');
+    };
+
     window.addEventListener('click', function (e) {
         if (e.target.className.indexOf('wk-dayname') === -1) return;
         var daylink = e.target.querySelector('.wk-daylink');
@@ -19,19 +32,24 @@
         ];
         day = day[0].replace('(', '').replace(')', '');
 
-        var tags = [
-            '#' + date[0],
-            '#' + month + '月',
-            '#' + day + '曜日'
-        ];
-
         /****** 編集エリア ******/
-        // ScrapboxプロジェクトID
-        var scrapboxProject = 'daiiz-private';
-
         // お好きなタイトル
         var title = date.join('-');
 
+        // ScrapboxプロジェクトID
+        var scrapboxProject = 'daiiz-private';
+        /************************/
+
+        var projectUrl = 'https://scrapbox.io/' + scrapboxProject + '/';
+        var tags = [
+            '[← ' + projectUrl + encodeURIComponent(diffDate(title, -1)) +']',
+            '#' + date[0],
+            '#' + month + '月',
+            '#' + day + '曜日',
+            '[→ ' + projectUrl + encodeURIComponent(diffDate(title, +1)) +']'
+        ];
+
+        /****** 編集エリア ******/
         // お好きなハッシュタグまたは本文
         var body = encodeURIComponent(tags.join(' '));
         /************************/
