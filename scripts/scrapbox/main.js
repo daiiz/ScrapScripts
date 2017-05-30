@@ -31,7 +31,7 @@ var bindEvents = function ($appRoot) {
 
     timer = window.setTimeout(function () {
       $bubble.show();
-    }, 1000);
+    }, 650);
   });
 
   $appRoot.on('mouseleave', 'a.page-link', function (e) {
