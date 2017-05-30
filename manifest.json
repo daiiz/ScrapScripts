@@ -24,6 +24,16 @@
             "run_at": "document_start"
         },
         {
+            "matches": ["*://scrapbox.io/*"],
+            "css": [
+              "scripts/scrapbox/main.css"
+            ],
+            "js": [
+                "scripts/scrapbox/main.js"
+            ],
+            "run_at": "document_end"
+        },
+        {
             "matches": ["*://calendar.google.com/calendar/render"],
             "css": [
                 "scripts/google-calendar/main.css"

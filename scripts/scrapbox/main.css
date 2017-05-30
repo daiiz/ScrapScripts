@@ -1,0 +1,27 @@
+#daiiz-rel-cards-bubble {
+  background-color: #fff;
+  box-shadow: 0 2px 2px 0 rgba(0,0,0,.14),
+              0 3px 1px -2px rgba(0,0,0,.2),
+              0 1px 5px 0 rgba(0,0,0,.12);
+  position: absolute;
+  display: none;
+  padding: 10px;
+  box-sizing: content-box;
+  z-index: 10000;
+}
+
+.daiiz-cards {
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+}
+
+.daiiz-cards li {
+  float: none !important;
+}
+
+#daiiz-rel-cards-bubble .page-list-item {
+  display: inline-block;
+  white-space: normal;
+}
