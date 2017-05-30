@@ -62,6 +62,7 @@ var $getRelCardBubble = function ($appRoot) {
 };
 
 var $getRelCards = function (title) {
+  $('.daiiz-cards').remove();
   var relationLabels = $('.relation-label');
   var $cards = $('<div class="daiiz-cards grid"></div>');
   for (var i = 0; i < relationLabels.length; i++) {
