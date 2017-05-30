@@ -26,10 +26,10 @@
         {
             "matches": ["*://scrapbox.io/*"],
             "css": [
-              "scripts/scrapbox/main.css"
+              "scripts/scrapbox-io/main.css"
             ],
             "js": [
-                "scripts/scrapbox/main.js"
+                "scripts/scrapbox-io/main.js"
             ],
             "run_at": "document_end"
         },
