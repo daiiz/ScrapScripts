@@ -1,5 +1,5 @@
 var bindEvents = function ($appRoot) {
-  // 関連カード
+  /* 関連カード */
   var timer = null;
   $appRoot.on('mouseenter', 'a.page-link', function (e) {
     var $a = $(e.target).closest('a.page-link');
@@ -51,7 +51,7 @@ var bindEvents = function ($appRoot) {
   });
 };
 
-// 関連カード
+/* 関連カード */
 var $getRelCardBubble = function ($appRoot) {
   var $relCardsBubble = $('#daiiz-rel-cards-bubble');
   if ($relCardsBubble.length === 0) {
@@ -61,6 +61,7 @@ var $getRelCardBubble = function ($appRoot) {
   return $relCardsBubble;
 };
 
+/* 関連カード */
 var $getRelCards = function (title) {
   $('.daiiz-cards').remove();
   var relationLabels = $('.relation-label');
