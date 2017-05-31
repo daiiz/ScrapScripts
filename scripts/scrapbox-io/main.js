@@ -9,7 +9,8 @@ var bindEvents = function ($appRoot) {
     $bubble.css({
       'max-width': $('.editor-wrapper')[0].offsetWidth - $a[0].offsetLeft,
       'left': rect.left + window.pageXOffset,
-      'top': rect.top + $a[0].offsetHeight + window.pageYOffset + 3,
+      // .related-page-listのmargin-top=24pxぶん引く
+      'top': rect.top + window.pageYOffset + $a[0].offsetHeight + 3 - 24,
       'background-color': $('body').css('background-color')
     });
     var tag = $a[0].innerText.replace(/^#/gi, '').split('#')[0];
