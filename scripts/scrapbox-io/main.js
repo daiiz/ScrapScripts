@@ -26,7 +26,7 @@ var bindEvents = function ($appRoot) {
     $bubble.find('.daiiz-cards').remove();
     $bubble.append($cards);
     $bubble.css({
-      'height': $('.grid li').css('height')
+      'height': $('li.relation-label').css('height')
     });
 
     timer = window.setTimeout(function () {
@@ -55,7 +55,7 @@ var bindEvents = function ($appRoot) {
 var $getRelCardBubble = function ($appRoot) {
   var $relCardsBubble = $('#daiiz-rel-cards-bubble');
   if ($relCardsBubble.length === 0) {
-    $relCardsBubble = $('<div id="daiiz-rel-cards-bubble"></div>');
+    $relCardsBubble = $('<div id="daiiz-rel-cards-bubble" class="related-page-list"></div>');
     $appRoot.find('.page').append($relCardsBubble);
   }
   return $relCardsBubble;
