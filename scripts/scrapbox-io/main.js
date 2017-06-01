@@ -64,6 +64,17 @@ var $getRelCardBubble = function ($appRoot) {
 
 /* 関連カード */
 var $getRelCards = function (title) {
+  var project = window.encodeURIComponent(window.location.href.match(/scrapbox.io\/([^\/.]*)/)[1]);
+  var $fillUpIcon = function ($clonedLi) {
+    if ($clonedLi.find('img.lazy-load-img').length === 0) {
+      var cardTitle = window.encodeURIComponent($clonedLi.find('div.title').text());
+      $clonedLi.find('div.icon').append(
+        `<img src="https://scrapbox.io/api/pages/${project}/${cardTitle}/icon"
+        class="lazy-load-img">`);
+    }
+    return $clonedLi;
+  };
+  
   $('.daiiz-cards').remove();
   var relationLabels = $('.relation-label');
   var $cards = $('<div class="daiiz-cards grid"></div>');
@@ -72,11 +83,13 @@ var $getRelCards = function (title) {
     var label = $label.find('.title')[0].innerText;
     if (label === title) {
       var $li = $label.next('li.page-list-item');
-      $cards.append($li.clone(true));
+      var $clonedLi = $li.clone(true);
+      $cards.append($fillUpIcon($clonedLi));
       var c = 0;
       while ($li.length === 1 && c < 200) {
         $li = $li.next('li.page-list-item');
-        $cards.append($li.clone(true));
+        var $clonedLi = $li.clone(true);
+        $cards.append($fillUpIcon($clonedLi));
         c++;
       }
     }
