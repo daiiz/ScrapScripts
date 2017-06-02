@@ -3,11 +3,7 @@ var bindEvents = function ($appRoot) {
   var timer = null;
   $appRoot.on('mouseenter', 'a.page-link', function (e) {
     var $a = $(e.target).closest('a.page-link');
-
-    $root = $appRoot.find('.page')
-    if (!$a.parent().hasClass('daiiz-bubble-text')) {
-      $('.daiiz-card').remove();
-    }
+    $root = $appRoot.find('.page');
 
     if ($a.hasClass('empty-page-link')) return;
     var $bubble = $getTextBubble();
@@ -107,23 +103,12 @@ var $getRefTextBody = function (title, $root, $bubble) {
         }
       }
 
-      // ハッシュタグ
-      var hashTags = row.match(/(^| )\#[^ ]+/gi);
-      if (hashTags) {
-        for (var i = 0; i < hashTags.length; i++) {
-          var hashTag = hashTags[i].trim();
-          var keyword = hashTag.substring(1, hashTag.length);
-          var a = `<a href="/${project}/${keyword}" class="${className}">${hashTag}</a>`;
-          row = row.replace(hashTag, a);
-        }
-      }
-
       // リンク，画像，アイコン
       var links = row.match(/\[.+?\]/gi);
       if (links) {
         for (var i = 0; i < links.length; i++) {
           var link = links[i];
-          var keyword = link.replace(/\[/gi, '').replace(/\]/gi, '');
+          var keyword = link.replace(/\[/gi, '').replace(/\]/gi, '').split('<')[0];
           var href = (keyword[0] === '/') ? keyword : `/${project}/${keyword}`;
           var className = (keyword[0] === '/') ? '' : 'page-link';
           // 別名記法
@@ -131,17 +116,18 @@ var $getRefTextBody = function (title, $root, $bubble) {
             var toks = keyword.split(' ');
             var t0 = toks[0];
             var t1 = toks[1];
-            if (toks.length !== 2) {
-              if (t0.startsWith('http')) {
-                // 先頭以外の要素を全結合
-                toks.reverse().pop();
-                toks.reverse();
-              }else {
-                // 末尾以外の要素を全結合
-                t0 = toks.pop();
-              }
-              t1 = toks.join(' ');
+            if (t0.startsWith('http')) {
+              // 先頭以外の要素を全結合
+              toks.reverse().pop();
+              toks.reverse();
+            }else if (t1.startsWith('http')){
+              // 末尾以外の要素を全結合
+              t0 = toks.pop();
+            }else {
+              t0 = toks.join(' ');
             }
+            t1 = toks.join(' ');
+
             var fmts = {};
             if (t0.startsWith('http') && !t0.endsWith('.jpg') && !t0.endsWith('.png') && !t0.endsWith('.gif')) {
               fmts.href = t0;
@@ -150,8 +136,10 @@ var $getRefTextBody = function (title, $root, $bubble) {
               fmts.href = t1;
               fmts.label = t0;
             }
-            keyword = fmts.label;
-            href = fmts.href;
+            keyword = fmts.label.replace('#', '');
+            var toks = fmts.href.split('/');
+            var pageName = window.encodeURIComponent(toks.pop());
+            href = toks.join('/') + '/' + pageName;
             className = 'daiiz-ref-link';
           };
           var a = `<a href="${href}" class="${className}">${keyword}</a>`;
@@ -163,6 +151,17 @@ var $getRefTextBody = function (title, $root, $bubble) {
             a = `<img class="daiiz-small-img" src="${keyword}/raw">`;
           }
           row = row.replace(link, a);
+        }
+      }
+
+      // ハッシュタグ
+      var hashTags = row.match(/(^| )\#[^ ]+/gi);
+      if (hashTags) {
+        for (var i = 0; i < hashTags.length; i++) {
+          var hashTag = hashTags[i].trim();
+          var keyword = hashTag.substring(1, hashTag.length);
+          var a = `<a href="/${project}/${keyword}" class="page-link">${hashTag}</a>`;
+          row = row.replace(hashTag, a);
         }
       }
 
