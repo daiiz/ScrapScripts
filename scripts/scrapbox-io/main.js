@@ -4,34 +4,23 @@ var bindEvents = function ($appRoot) {
   $appRoot.on('mouseenter', 'a.page-link', function (e) {
     var $a = $(e.target).closest('a.page-link');
     if ($a.hasClass('empty-page-link')) return;
-    var $bubble = $getRelCardBubble($appRoot);
+    var $bubble = $getTextBubble($appRoot);
     var rect = $a[0].getBoundingClientRect();
     $bubble.css({
       'max-width': $('.editor-wrapper')[0].offsetWidth - $a[0].offsetLeft,
       'left': rect.left + window.pageXOffset,
       // .related-page-listのmargin-top=24pxぶん引く
       'top': rect.top + window.pageYOffset + $a[0].offsetHeight + 3 - 24,
-      'background-color': $('body').css('background-color')
+      'border-color': $('body').css('background-color')
     });
     var tag = $a[0].innerText.replace(/^#/gi, '').split('#')[0];
     if (tag.startsWith('/')) {
       $bubble.hide();
       return;
     }
-    $cards = $getRelCards(tag);
-    if ($cards.children().length === 0) {
-      $bubble.hide();
-      return;
-    }
-
-    $bubble.find('.daiiz-cards').remove();
-    $bubble.append($cards);
-    $bubble.css({
-      'height': $('li.relation-label').css('height')
-    });
 
     timer = window.setTimeout(function () {
-      $bubble.show();
+      $getRefTextBody(tag, $appRoot, $bubble);
     }, 650);
   });
 
@@ -39,62 +28,111 @@ var bindEvents = function ($appRoot) {
     window.clearTimeout(timer);
   });
 
-  $appRoot.on('mouseleave', '#daiiz-rel-cards-bubble', function (e) {
-    var $bubble = $getRelCardBubble($appRoot);
+  $appRoot.on('mouseleave', '.daiiz-card', function (e) {
+    var $bubble = $('.daiiz-card');
     window.clearTimeout(timer);
-    $bubble.hide();
+    //$bubble.hide();
   });
 
-  $appRoot.on('click', function () {
-    var $bubble = $getRelCardBubble($appRoot);
+  $appRoot.on('click', function (e) {
     window.clearTimeout(timer);
-    $bubble.hide();
-  });
-};
-
-/* 関連カード */
-var $getRelCardBubble = function ($appRoot) {
-  var $relCardsBubble = $('#daiiz-rel-cards-bubble');
-  if ($relCardsBubble.length === 0) {
-    $relCardsBubble = $('<div id="daiiz-rel-cards-bubble" class="related-page-list"></div>');
-    $appRoot.find('.page').append($relCardsBubble);
-  }
-  return $relCardsBubble;
-};
-
-/* 関連カード */
-var $getRelCards = function (title) {
-  var project = window.encodeURIComponent(window.location.href.match(/scrapbox.io\/([^\/.]*)/)[1]);
-  var $fillUpIcon = function ($clonedLi) {
-    if ($clonedLi.find('img.lazy-load-img').length === 0) {
-      var cardTitle = window.encodeURIComponent($clonedLi.find('div.title').text());
-      $clonedLi.find('div.icon').append(
-        `<img src="https://scrapbox.io/api/pages/${project}/${cardTitle}/icon"
-        class="lazy-load-img">`);
+    var $bubble = $('.daiiz-card');
+    var $t = $(e.target).closest('.daiiz-card');
+    if ($(e.target)[0].tagName.toLowerCase() === 'a') {
+      $bubble.remove();
+    }else if ($t.length > 0) {
+      $t.remove();
+    }else {
+      $bubble.remove();
     }
-    return $clonedLi;
-  };
-  
-  $('.daiiz-cards').remove();
-  var relationLabels = $('.relation-label');
-  var $cards = $('<div class="daiiz-cards grid"></div>');
-  for (var i = 0; i < relationLabels.length; i++) {
-    var $label = $(relationLabels[i]);
-    var label = $label.find('.title')[0].innerText;
-    if (label === title) {
-      var $li = $label.next('li.page-list-item');
-      var $clonedLi = $li.clone(true);
-      $cards.append($fillUpIcon($clonedLi));
-      var c = 0;
-      while ($li.length === 1 && c < 200) {
-        $li = $li.next('li.page-list-item');
-        var $clonedLi = $li.clone(true);
-        $cards.append($fillUpIcon($clonedLi));
-        c++;
+  });
+};
+
+
+/* テキストカード */
+var $getTextBubble = function ($appRoot) {
+  var $textBubble = $('<div class="daiiz-text-bubble related-page-list daiiz-card"></div>');
+  return $textBubble;
+};
+
+var $getRefTextBody = function (title, $appRoot, $bubble) {
+  var project = window.encodeURIComponent(window.location.href.match(/scrapbox.io\/([^\/.]*)/)[1]);
+  var title = window.encodeURIComponent(title);
+  $.ajax({
+    type: 'GET',
+    url: `https://scrapbox.io/api/pages/${project}/${title}/text`
+  }).success(function (data) {
+    $appRoot.find('.page').append($bubble);
+    var rows = data.split('\n');
+    var res = [];
+    for (var j = 1; j < rows.length; j++) {
+      var row = rows[j];
+
+      // 太文字
+      var bolds = row.match(/\[\[.+?\]\]/gi);
+      if (bolds) {
+        for (var i = 0; i < bolds.length; i++) {
+          var bold = bolds[i];
+          var keyword = bold.replace(/\[\[/gi, '').replace(/\]\]/gi, '');
+          var b = `<b>${keyword}</b>`;
+          row = row.replace(bold, b);
+        }
+      }
+
+      // リンク，画像，アイコン
+      var links = row.match(/\[.+?\]/gi);
+      if (links) {
+        for (var i = 0; i < links.length; i++) {
+          var link = links[i];
+          var keyword = link.replace(/\[/gi, '').replace(/\]/gi, '');
+          var href = (keyword[0] === '/') ? keyword : `/${project}/${keyword}`;
+          var className = (keyword[0] === '/') ? '' : 'page-link';
+          // 別名記法
+          if (keyword.indexOf(' ') > 0) {
+            var toks = keyword.split(' ');
+            var t0 = toks[0];
+            var t1 = toks[1];
+            if (toks.length !== 2) {
+              if (t0.startsWith('http')) {
+                // 先頭以外の要素を全結合
+                toks.reverse().pop();
+                toks.reverse();
+              }else {
+                // 末尾以外の要素を全結合
+                t0 = toks.pop();
+              }
+              t1 = toks.join(' ');
+            }
+            var fmts = {};
+            if (t0.startsWith('http') && !t0.endsWith('.jpg') && !t0.endsWith('.png') && !t0.endsWith('.gif')) {
+              fmts.href = t0;
+              fmts.label = t1;
+            }else {
+              fmts.href = t1;
+              fmts.label = t0;
+            }
+            keyword = fmts.label;
+            href = fmts.href;
+            className = 'daiiz-ref-link';
+          };
+          var a = `<a href="${href}" class="${className}">${keyword}</a>`;
+          if (keyword.endsWith('.icon')) {
+            a = `<img class="daiiz-tiny-icon" src="https://scrapbox.io/api/pages/${href.split('.icon')[0]}/icon">`;
+          }else if (keyword.endsWith('.jpg') || keyword.endsWith('.png') || keyword.endsWith('.gif')) {
+            a = `<img class="daiiz-small-img" src="${keyword}">`;
+          }else if (keyword.startsWith('https://gyazo.com/') || keyword.startsWith('http://gyazo.com/')) {
+            a = `<img class="daiiz-small-img" src="${keyword}/raw">`;
+          }
+          row = row.replace(link, a);
+        }
+      }
+      if (row && row.length > 0) {
+        res.push(row);
       }
     }
-  }
-  return $cards;
+    $bubble.html(`<div>${res.join('<br>')}</div>`);
+    $bubble.show();
+  });
 };
 
 $(function () {
