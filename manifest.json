@@ -29,7 +29,7 @@
               "scripts/scrapbox-io/main.css"
             ],
             "js": [
-                "scripts/scrapbox-io/main.js"
+                "scripts/scrapbox-io/text-bubble.js"
             ],
             "run_at": "document_end"
         },

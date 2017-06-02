@@ -31,6 +31,7 @@
   font-size: 9pt;
   cursor: default;
   border: 1px solid #fff;
+  position: absolute;
 }
 
 .daiiz-tiny-icon {
@@ -43,4 +44,10 @@
 
 .daiiz-ref-link {
   text-decoration: underline;
+}
+
+.daiiz-ref-link img {
+  border-style: none none solid;
+  border-width: 1px;
+  border-color: #7ba1f8;
 }
