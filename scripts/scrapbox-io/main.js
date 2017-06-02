@@ -3,8 +3,14 @@ var bindEvents = function ($appRoot) {
   var timer = null;
   $appRoot.on('mouseenter', 'a.page-link', function (e) {
     var $a = $(e.target).closest('a.page-link');
+
+    $root = $appRoot.find('.page')
+    if (!$a.parent().hasClass('daiiz-bubble-text')) {
+      $('.daiiz-card').remove();
+    }
+
     if ($a.hasClass('empty-page-link')) return;
-    var $bubble = $getTextBubble($appRoot);
+    var $bubble = $getTextBubble();
     var rect = $a[0].getBoundingClientRect();
     $bubble.css({
       'max-width': $('.editor-wrapper')[0].offsetWidth - $a[0].offsetLeft,
@@ -20,7 +26,7 @@ var bindEvents = function ($appRoot) {
     }
 
     timer = window.setTimeout(function () {
-      $getRefTextBody(tag, $appRoot, $bubble);
+      $getRefTextBody(tag, $root, $bubble);
     }, 650);
   });
 
@@ -31,7 +37,6 @@ var bindEvents = function ($appRoot) {
   $appRoot.on('mouseleave', '.daiiz-card', function (e) {
     var $bubble = $('.daiiz-card');
     window.clearTimeout(timer);
-    //$bubble.hide();
   });
 
   $appRoot.on('click', function (e) {
@@ -50,25 +55,25 @@ var bindEvents = function ($appRoot) {
 
 
 /* テキストカード */
-var $getTextBubble = function ($appRoot) {
+var $getTextBubble = function () {
   var $textBubble = $('<div class="daiiz-text-bubble related-page-list daiiz-card"></div>');
   return $textBubble;
 };
 
-var $getRefTextBody = function (title, $appRoot, $bubble) {
+var $getRefTextBody = function (title, $root, $bubble) {
   var project = window.encodeURIComponent(window.location.href.match(/scrapbox.io\/([^\/.]*)/)[1]);
   var title = window.encodeURIComponent(title);
   $.ajax({
     type: 'GET',
     url: `https://scrapbox.io/api/pages/${project}/${title}/text`
   }).success(function (data) {
-    $appRoot.find('.page').append($bubble);
+    $root.append($bubble);
     var rows = data.split('\n');
     var res = [];
     for (var j = 1; j < rows.length; j++) {
       var row = rows[j];
 
-      // 太文字
+      // 太文字 [[ ]]
       var bolds = row.match(/\[\[.+?\]\]/gi);
       if (bolds) {
         for (var i = 0; i < bolds.length; i++) {
@@ -76,6 +81,40 @@ var $getRefTextBody = function (title, $appRoot, $bubble) {
           var keyword = bold.replace(/\[\[/gi, '').replace(/\]\]/gi, '');
           var b = `<b>${keyword}</b>`;
           row = row.replace(bold, b);
+        }
+      }
+
+      // 太文字 [* ]
+      var bolds = row.match(/\[\*.* .+?\]/gi);
+      if (bolds) {
+        for (var i = 0; i < bolds.length; i++) {
+          var bold = bolds[i];
+          console.info(bold)
+          var keyword = bold.replace(/\[\*.* /gi, '').replace(/\]/gi, '');
+          var b = `<b>${keyword}</b>`;
+          row = row.replace(bold, b);
+        }
+      }
+
+      // 斜体
+      var italics = row.match(/\[\/ .+?\]/gi);
+      if (italics) {
+        for (var i = 0; i < italics.length; i++) {
+          var italic = italics[i];
+          var keyword = italic.replace(/\[\/ /gi, '').replace(/\]/gi, '');
+          var b = `<i>${keyword}</i>`;
+          row = row.replace(italic, b);
+        }
+      }
+
+      // ハッシュタグ
+      var hashTags = row.match(/(^| )\#[^ ]+/gi);
+      if (hashTags) {
+        for (var i = 0; i < hashTags.length; i++) {
+          var hashTag = hashTags[i].trim();
+          var keyword = hashTag.substring(1, hashTag.length);
+          var a = `<a href="/${project}/${keyword}" class="${className}">${hashTag}</a>`;
+          row = row.replace(hashTag, a);
         }
       }
 
@@ -117,7 +156,7 @@ var $getRefTextBody = function (title, $appRoot, $bubble) {
           };
           var a = `<a href="${href}" class="${className}">${keyword}</a>`;
           if (keyword.endsWith('.icon')) {
-            a = `<img class="daiiz-tiny-icon" src="https://scrapbox.io/api/pages/${href.split('.icon')[0]}/icon">`;
+            a = `<img class="daiiz-tiny-icon" src="https://scrapbox.io/api/pages${href.split('.icon')[0]}/icon">`;
           }else if (keyword.endsWith('.jpg') || keyword.endsWith('.png') || keyword.endsWith('.gif')) {
             a = `<img class="daiiz-small-img" src="${keyword}">`;
           }else if (keyword.startsWith('https://gyazo.com/') || keyword.startsWith('http://gyazo.com/')) {
@@ -126,11 +165,13 @@ var $getRefTextBody = function (title, $appRoot, $bubble) {
           row = row.replace(link, a);
         }
       }
+
       if (row && row.length > 0) {
         res.push(row);
       }
+
     }
-    $bubble.html(`<div>${res.join('<br>')}</div>`);
+    $bubble.html(`<div class="daiiz-bubble-text">${res.join('<br>')}</div>`);
     $bubble.show();
   });
 };
