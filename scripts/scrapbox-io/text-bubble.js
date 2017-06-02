@@ -72,8 +72,13 @@ var decorator = function (scrapObjects, project, title) {
             fmts.href = head + ' ' + tail;
             fmts.label = head + ' ' + tail;
           }
+
           var href = (fmts.href[0] === '/') ? fmts.href: `/${project}/${fmts.href}`;
           var className = (fmts.href[0] === '/') ? '' : 'page-link';
+          if (fmts.href.startsWith('http')) {
+            href = fmts.href;
+            className = 'daiiz-ref-link';
+          }
           var a = `<a href="${encodeHref(href)}" class="${className}">
             ${makeImageTag(fmts.label, fmts.label, fmts.label)}</a>`;
           raw = a;
@@ -91,6 +96,10 @@ var decorator = function (scrapObjects, project, title) {
             raw = raw.replace('[', '').replace(']', '');
             var href = (raw[0] === '/') ? raw : `/${project}/${raw}`;
             var className = (raw[0] === '/') ? '' : 'page-link';
+            if (raw.startsWith('http')) {
+              href = raw;
+              className = 'daiiz-ref-link';
+            }
             var a = `<a href="${encodeHref(href)}" class="${className}">${raw}</a>`;
             raw = makeImageTag(raw, href, a);
           }
@@ -108,7 +117,8 @@ var decorator = function (scrapObjects, project, title) {
 var encodeHref = function (url) {
   var toks = url.split('/');
   var pageName = toks.pop();
-  return toks.join('/') + (url[0] === '/' ? '/' : '') + window.encodeURIComponent(pageName);
+  return toks.join('/') + (url[0] === '/' || url.startsWith('http') ? '/' : '') +
+    window.encodeURIComponent(pageName);
 };
 
 // 装飾記法内のリンクを解決
@@ -120,6 +130,10 @@ var solveInnerLink = function (row, project) {
       var keyword = link.replace(/\[/gi, '').replace(/\]/gi, '');
       var href = (keyword[0] === '/') ? keyword : `/${project}/${keyword}`;
       var className = (keyword[0] === '/') ? '' : 'page-link';
+      if (fmts.href.startsWith('http')) {
+        href = fmts.href;
+        className = 'daiiz-ref-link';
+      }
       var a = `<a href="${encodeHref(href)}" class="${className}">${keyword}</a>`;
       a = makeImageTag(keyword, href, a);
       row = row.replace(link, a);
