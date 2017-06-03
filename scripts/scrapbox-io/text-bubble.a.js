@@ -207,7 +207,7 @@ var parser = function (text) {
   var c = 0;
   for (var i = 0; i < rows.length; i++) {
     // 行
-    var row = rows[i];
+    var row = rows[i].trim();
     if (row.startsWith('code:')) {
         codeOpen = true;
     }
