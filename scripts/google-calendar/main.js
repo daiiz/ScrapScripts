@@ -1,4 +1,6 @@
 (function () {
+    console.info('...');
+    return;
     var diffDate = function (date, diff) {
       // date: '1993-09-11'
       // diff: +1, -1
@@ -37,8 +39,9 @@
         var title = date.join('-');
 
         // ScrapboxプロジェクトID
-        var scrapboxProject = 'daiiz-private';
+        var scrapboxProject = 'daiiz-private'; //localStorage['main-project'];
         /************************/
+        if (!scrapboxProject) return;
 
         var projectUrl = 'https://scrapbox.io/' + scrapboxProject + '/';
         var tags = [
