@@ -13,7 +13,6 @@ var $getRefTextBody = function (title, $root, $bubble) {
   });
 };
 
-
 var decorator = function (scrapObjects, project, title) {
   var body = [];
   for (var i = 1; i < scrapObjects.length; i++) {
@@ -25,7 +24,18 @@ var decorator = function (scrapObjects, project, title) {
 
       if (tok.type === 'text') {
         // プレーンテキスト
-        body.push(solveInnerLink(tok.raw, project));
+        // 裸リンクを探す
+        var words = tok.raw.split(' ');
+        var res = [];
+        for (var k = 0; k < words.length; k++) {
+          var word = words[k].trim();
+          if (word.startsWith('http')) {
+            var attrs = makeATagAttrs(word, word, word);
+            word = `<a href=${attrs.href} class="${attrs.className}">${attrs.raw}</a>`;
+          }
+          res.push(word);
+        }
+        body.push(solveInnerLink(res.join(' '), project));
       }else if (tok.type === 'backquote') {
         body.push(`<span class="daiiz-backquote">${tok.raw}</span>`);
       }else if (tok.type === 'bracket') {
@@ -170,7 +180,6 @@ var makeImageTag = function (keyword, href, a) {
   }
   return a;
 };
-
 
 var parser = function (text) {
   var buf = [];
