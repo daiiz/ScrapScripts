@@ -27,6 +27,7 @@
 }
 
 .daiiz-text-bubble {
+  color: #565656;
   padding: 5px;
   font-size: 9pt;
   cursor: default;
