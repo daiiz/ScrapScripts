@@ -137,10 +137,12 @@ var makeATagAttrs = function (raw, project) {
 var encodeHref = function (url) {
   var toks = url.split('/');
   var pageName = toks.pop();
-  var pageNames = pageName.split(/#.{24}$/); // 行リンク対応
-  pageName = window.encodeURIComponent(pageName);
-  if (pageNames.length === 2) {
-    pageName = window.encodeURIComponent(pageNames[0]) + pageNames[1];
+  var pageRowNum = pageName.match(/#.{24}$/); // 行リンク対応
+  if (pageRowNum) {
+    var n = pageRowNum[0];
+    pageName = window.encodeURIComponent(pageName.split(n)[0]) + n;
+  }else {
+    pageName = window.encodeURIComponent(pageName);
   }
   return toks.join('/') + (url[0] === '/' || url.startsWith('http') ? '/' : '') + pageName;
 };
