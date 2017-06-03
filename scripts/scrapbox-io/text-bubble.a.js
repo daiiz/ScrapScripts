@@ -275,8 +275,12 @@ var bindEvents = function ($appRoot) {
     $bubble.attr('data-pos', pos);
 
     // すでに表示されているならば，何もしない
-    if ($(`.daiiz-card[data-pos="${pos}"]`).length > 0) {
+    if ($(`.daiiz-text-bubble[data-pos="${pos}"]`).length > 0) {
       return;
+    }
+
+    if ($a.attr('rel') && $a.attr('rel') == 'route') {
+      $(`.daiiz-text-bubble:not([data-pos="${pos}"])`).remove();
     }
 
     var tag = $a[0].innerText.replace(/^#/gi, '').split('#')[0];
