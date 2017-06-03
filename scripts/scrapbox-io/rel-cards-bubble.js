@@ -2,6 +2,8 @@ var bindEvents = function ($appRoot) {
   /* 関連カード */
   var timer = null;
   $appRoot.on('mouseenter', 'a.page-link', function (e) {
+    var relLabelHeight = +($('li.relation-label').css('height').split('px')[0]);
+    var pad = 10;  // main.cssでの設定値
     var $a = $(e.target).closest('a.page-link');
     if ($a.hasClass('empty-page-link')) return;
     var $bubble = $getRelCardBubble($appRoot);
@@ -10,7 +12,7 @@ var bindEvents = function ($appRoot) {
       'max-width': $('.editor-wrapper')[0].offsetWidth - $a[0].offsetLeft,
       'left': rect.left + window.pageXOffset,
       // .related-page-listのmargin-top=24pxぶん引く
-      'top': rect.top + window.pageYOffset + $a[0].offsetHeight + 3 - 24,
+      'top': rect.top + window.pageYOffset - relLabelHeight - (pad * 2) - 24 - 3,  // +$a[0].offsetHeight
       'background-color': $('body').css('background-color')
     });
     var tag = $a[0].innerText.replace(/^#/gi, '').split('#')[0];
@@ -27,7 +29,7 @@ var bindEvents = function ($appRoot) {
     $bubble.find('.daiiz-cards').remove();
     $bubble.append($cards);
     $bubble.css({
-      'height': $('li.relation-label').css('height')
+      'height': relLabelHeight
     });
 
     timer = window.setTimeout(function () {
