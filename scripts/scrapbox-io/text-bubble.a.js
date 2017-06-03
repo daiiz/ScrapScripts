@@ -254,10 +254,18 @@ var parser = function (text) {
   return scrapObjs;
 };
 
+var installed = function (functionName) {
+  var d = `data-${functionName}`;
+  if ($('body').attr(d) && $('body').attr(d) === 'on') return true;
+  return false;
+};
+
 var bindEvents = function ($appRoot) {
   /* 関連カード */
   var timer = null;
   $appRoot.on('mouseenter', 'a.page-link', function (e) {
+    if (!installed('daiiz-text-bubble')) return;
+
     var $a = $(e.target).closest('a.page-link');
     $root = $appRoot.find('.page');
 

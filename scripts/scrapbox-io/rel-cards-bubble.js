@@ -2,6 +2,8 @@ var bindEvents = function ($appRoot) {
   /* 関連カード */
   var timer = null;
   $appRoot.on('mouseenter', 'a.page-link', function (e) {
+    if (!installed('daiiz-rel-bubble')) return;
+
     var relLabelHeight = +($('li.relation-label').css('height').split('px')[0]);
     var pad = 10;  // main.cssでの設定値
     var $a = $(e.target).closest('a.page-link');
@@ -98,6 +100,12 @@ var $getRelCards = function (title) {
     }
   }
   return $cards;
+};
+
+var installed = function (functionName) {
+  var d = `data-${functionName}`;
+  if ($('body').attr(d) && $('body').attr(d) === 'on') return true;
+  return false;
 };
 
 $(function () {
