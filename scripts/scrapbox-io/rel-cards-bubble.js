@@ -6,6 +6,7 @@ var bindEvents = function ($appRoot) {
     var pad = 10;  // main.cssでの設定値
     var $a = $(e.target).closest('a.page-link');
     if ($a.hasClass('empty-page-link')) return;
+    if (!$a.attr('rel') && $a.attr('rel') !== 'route') return;
     var $bubble = $getRelCardBubble($appRoot);
     var rect = $a[0].getBoundingClientRect();
     $bubble.css({
