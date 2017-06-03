@@ -137,8 +137,12 @@ var makeATagAttrs = function (raw, project) {
 var encodeHref = function (url) {
   var toks = url.split('/');
   var pageName = toks.pop();
-  return toks.join('/') + (url[0] === '/' || url.startsWith('http') ? '/' : '') +
-    window.encodeURIComponent(pageName).replace(/%23/gi, '#');
+  var pageNames = pageName.split(/#.{24}$/); // 行リンク対応
+  pageName = window.encodeURIComponent(pageName);
+  if (pageNames.length === 2) {
+    pageName = window.encodeURIComponent(pageNames[0]) + pageNames[1];
+  }
+  return toks.join('/') + (url[0] === '/' || url.startsWith('http') ? '/' : '') + pageName;
 };
 
 // 装飾記法内のリンクを解決
