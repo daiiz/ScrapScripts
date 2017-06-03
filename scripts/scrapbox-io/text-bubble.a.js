@@ -1,6 +1,6 @@
 var $getRefTextBody = function (title, $root, $bubble) {
   var project = window.encodeURIComponent(window.location.href.match(/scrapbox.io\/([^\/.]*)/)[1]);
-  if (title.indexOf('%') === -1) var title = window.encodeURIComponent(title);
+  title = window.encodeURIComponent(title);
   $.ajax({
     type: 'GET',
     url: `https://scrapbox.io/api/pages/${project}/${title}/text`
@@ -138,7 +138,7 @@ var encodeHref = function (url) {
   var toks = url.split('/');
   var pageName = toks.pop();
   return toks.join('/') + (url[0] === '/' || url.startsWith('http') ? '/' : '') +
-    window.encodeURIComponent(pageName);
+    window.encodeURIComponent(pageName).replace(/%23/gi, '#');
 };
 
 // 装飾記法内のリンクを解決
@@ -221,6 +221,7 @@ var parser = function (text) {
     for (var j = 0; j < row.length; j++) {
       var char = row[j];
       if (char === '\t') {
+        // TABは無視している
       }else if (char === '[' && backquartoCounter === 0) {
         if (bracketCounter === 0) {
           storeBuf(c, 'text');
@@ -291,7 +292,7 @@ var bindEvents = function ($appRoot) {
       $(`.daiiz-text-bubble:not([data-pos="${pos}"])`).remove();
     }
 
-    var tag = $a[0].innerText.replace(/^#/gi, '').split('#')[0];
+    var tag = $a[0].innerText.replace(/^#/gi, '').replace(/#.{24}$/, '');
     if (tag.startsWith('/')) {
       $bubble.hide();
       return;
