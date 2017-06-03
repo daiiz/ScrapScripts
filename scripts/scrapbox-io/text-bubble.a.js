@@ -37,7 +37,11 @@ var decorator = function (scrapObjects, project, title) {
         }
         body.push(solveInnerLink(res.join(' '), project));
       }else if (tok.type === 'backquote') {
-        body.push(`<span class="daiiz-backquote">${tok.raw}</span>`);
+        var txt = '';
+        for (var k = 0; k < tok.raw.length; k++) {
+          txt += `<span>${tok.raw[k]}</span>`;
+        }
+        body.push(`<span class="daiiz-backquote">${txt}</span>`);
       }else if (tok.type === 'bracket') {
         raw = tok.raw.trim();
         var toks = raw.split(' ');
