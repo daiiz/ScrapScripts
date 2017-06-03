@@ -12,7 +12,7 @@ var bindEvents = function ($appRoot) {
       'max-width': $('.editor-wrapper')[0].offsetWidth - $a[0].offsetLeft,
       'left': rect.left + window.pageXOffset,
       // .related-page-listのmargin-top=24pxぶん引く
-      'top': rect.top + window.pageYOffset - relLabelHeight - (pad * 2) - 24 - 3,  // +$a[0].offsetHeight
+      'top': rect.top + window.pageYOffset - relLabelHeight - (pad * 2) - 24 - 5,  // +$a[0].offsetHeight
       'background-color': $('body').css('background-color')
     });
     var tag = $a[0].innerText.replace(/^#/gi, '').split('#')[0];

@@ -264,7 +264,7 @@ var bindEvents = function ($appRoot) {
       'max-width': $('.editor-wrapper')[0].offsetWidth - $a[0].offsetLeft,
       'left': rect.left + window.pageXOffset,
       // .related-page-listのmargin-top=24pxぶん引く
-      'top': rect.top + window.pageYOffset + $a[0].offsetHeight + 4 - 24,
+      'top': rect.top + window.pageYOffset + $a[0].offsetHeight + 3 - 24,
       'border-color': $('body').css('background-color')
     });
     var pos = `${$bubble.css('top')}_${$bubble.css('left')}`;
