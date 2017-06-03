@@ -34,6 +34,15 @@
   position: absolute;
 }
 
+.daiiz-backquote {
+  color: #342d9c;
+  background-color: rgba(0,0,0,0.04);
+  border-radius: 2px;
+  box-sizing: border-box;
+  padding: 1px;
+  font-size: 8.5pt;
+}
+
 .daiiz-tiny-icon {
   height: 11pt;
 }

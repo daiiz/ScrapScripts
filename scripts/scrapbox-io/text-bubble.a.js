@@ -26,6 +26,8 @@ var decorator = function (scrapObjects, project, title) {
       if (tok.type === 'text') {
         // プレーンテキスト
         body.push(solveInnerLink(tok.raw, project));
+      }else if (tok.type === 'backquote') {
+        body.push(`<span class="daiiz-backquote">${tok.raw}</span>`);
       }else if (tok.type === 'bracket') {
         raw = tok.raw.trim();
         var toks = raw.split(' ');
@@ -206,14 +208,14 @@ var parser = function (text) {
     for (var j = 0; j < row.length; j++) {
       var char = row[j];
       if (char === '\t') {
-      }else if (char === '[' && bracketCounter === 0) {
+      }else if (char === '[' && backquartoCounter === 0) {
         if (bracketCounter === 0) {
           storeBuf(c, 'text');
         }else {
           buf.push('[');
         }
         bracketCounter++;
-      }else if (char === ']' && bracketCounter === 0) {
+      }else if (char === ']' && backquartoCounter === 0) {
         bracketCounter--;
         if (bracketCounter === 0) {
           storeBuf(c, 'bracket'); // 開きと閉じが一致
@@ -226,7 +228,6 @@ var parser = function (text) {
           storeBuf(c, 'text');
         }else {
           backquartoCounter = 0; // 閉じ
-          console.info(buf.join(''));
           storeBuf(c, 'backquote');
         }
       }else {

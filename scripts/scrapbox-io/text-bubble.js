@@ -130,8 +130,8 @@ var solveInnerLink = function (row, project) {
       var keyword = link.replace(/\[/gi, '').replace(/\]/gi, '');
       var href = (keyword[0] === '/') ? keyword : `/${project}/${keyword}`;
       var className = (keyword[0] === '/') ? '' : 'page-link';
-      if (fmts.href.startsWith('http')) {
-        href = fmts.href;
+      if (link.startsWith('http')) {
+        href = link;
         className = 'daiiz-ref-link';
       }
       var a = `<a href="${encodeHref(href)}" class="${className}">${keyword}</a>`;
@@ -180,6 +180,16 @@ var parser = function (text) {
   var rows = text.split('\n');
   var scrapObjs = [];
 
+  var storeBuf = function (idx, objType) {
+    if (buf.length > 0 && buf.join('').trim().length > 0) {
+      scrapObjs[idx].push({
+        'raw': buf.join(''),
+        'type': objType
+      });
+      buf = [];
+    }
+  };
+
   var c = 0;
   for (var i = 0; i < rows.length; i++) {
     // 行
@@ -197,56 +207,35 @@ var parser = function (text) {
     for (var j = 0; j < row.length; j++) {
       var char = row[j];
       if (char === '\t') {
-      }else if (char === '[') {
+      }else if (char === '[' && backquartoCounter === 0) {
         if (bracketCounter === 0) {
-          if (buf.length > 0 && buf.join('').trim().length > 0) {
-            scrapObjs[c].push({
-              'raw': buf.join(''),
-              'type': 'text'
-            });
-            buf = [];
-          }
+          storeBuf(c, 'text');
         }else {
           buf.push('[');
         }
         bracketCounter++;
-      }else if (char === ']') {
+      }else if (char === ']' && backquartoCounter === 0) {
         bracketCounter--;
         if (bracketCounter === 0) {
-          // 開きと閉じが一致
-          if (buf.length > 0 && buf.join('').trim().length > 0) {
-            scrapObjs[c].push({
-              'raw': buf.join(''),
-              'type': 'bracket'
-            });
-            buf = [];
-          }
+          storeBuf(c, 'bracket'); // 開きと閉じが一致
         }else {
           buf.push(']');
         }
       }else if (char === '`') {
         if (backquartoCounter === 0) {
-          // 開き
-          backquartoCounter++;
+          backquartoCounter++; // 開き
+          storeBuf(c, 'text');
         }else {
-          // 閉じ
-          backquartoCounter = 0;
+          backquartoCounter = 0; // 閉じ
+          console.info(buf.join(''));
+          storeBuf(c, 'backquote');
         }
       }else {
-        // 記録対象文字
-        if (char.length > 0) {
-          buf.push(char);
-        }
+        if (char.length > 0) buf.push(char);  // 記録対象文字
       }
     }
     // 一行終わり
-    if (buf.length > 0 && buf.join('').trim().length > 0) {
-      scrapObjs[c].push({
-        'raw': buf.join(''),
-        'type': 'text'
-      });
-      buf = [];
-    }
+    storeBuf(c, 'text');
     c++;
   }
   return scrapObjs;
