@@ -67,8 +67,8 @@ var decorator = function (scrapObjects, project, title) {
           raw = tail;
 
           // 別名記法
-          var t0 = head;
-          var t1 = tail;
+          var t0 = head.trim();
+          var t1 = tail.trim();
           var fmts = {};
 
           if (t0.startsWith('http') && !t0.endsWith('.jpg') && !t0.endsWith('.png')
@@ -81,13 +81,13 @@ var decorator = function (scrapObjects, project, title) {
           }
 
           if (!fmts.href.startsWith('http')) {
-            fmts.href = head + ' ' + tail;
-            fmts.label = head + ' ' + tail;
+            fmts.href = (head + ' ' + tail).trim();
+            fmts.label = (head + ' ' + tail).trim();
           }
 
           var attrs = makeATagAttrs(fmts.href, project);
-          var a = `<a href="${encodeHref(attrs.href)}" class="${attrs.className}">
-            ${makeImageTag(fmts.label, fmts.label, fmts.label)}</a>`;
+          var a = `<a href="${encodeHref(attrs.href)}"
+            class="${attrs.className}">${makeImageTag(fmts.label, fmts.label, fmts.label)}</a>`;
           raw = a;
           others = false;
         }
@@ -126,7 +126,7 @@ var makeATagAttrs = function (raw, project) {
   }
   res.href = href;
   res.className = className;
-  res.raw = raw;
+  res.raw = raw.trim();
   return res;
 };
 
