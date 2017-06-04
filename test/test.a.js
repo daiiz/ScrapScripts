@@ -2,7 +2,7 @@
 var a = "hoge[link1][link2]hoga";
 var b = "daiki [link] [link] iizuka";
 var n = "I am [daiiz https://scrapbox.io/daiiz/]!";
-var m = "I am [daiiz https://scrapbox.io/daiiz/daiiz#eeee]!"
+var m = "I am [daiiz https://scrapbox.io/daiiz/daiiz#eeee]! [/daiiz/daiiz#5844e99dadf4e700000995de]";
 var s = "I am [daiiz https://scrapbox.io/daiiz/daiiz#5844e99dadf4e700000995de]! [daiiz]"
 var c = "[* bold]";
 var d = "[/ italic]";
@@ -14,9 +14,9 @@ var e = "[* [/ iizuka] foo]";
 
 var bb = "[[bold]]";
 var cc = "[* [daiiz.icon]]";
-//var e = "`code`";
+var code = "`code`";
 var f = "[/** [/ [* d] [f] ]]";
-var g = "[/** [/ [* d]] aaa]";
+var g = "...[/** [/ [* d]] aaa] ...";
 var h = "[a] [b] [* c[d]]"
 
 
@@ -78,18 +78,36 @@ var decorate = function (str, strOpenMark, depth) {
       if (img[1]) body = img[0];
     }else {
       // リンク, 画像
-      tagOpen.push('<a>');
-      tagClose.push('</a>');
-      var img = makeImageTag(body);
-      if (img[1]) {
-        tagOpen = [];
-        tagClose = [];
-        body = img[0];
-      }
+      var pageLink = makePageLink(body, tagOpen, tagClose);
+      tagOpen = pageLink.tagOpen;
+      tagClose = pageLink.tagClose;
+      body = pageLink.body;
     }
+
+  }else if (strOpenMark === DOUBLE_BRACKET_OPEN) {
+    var body = str.replace(/^\[\[/, '').replace(/\]\]$/, '');
+    tagOpen.push('<b>');
+    tagClose.push('</b>');
+    var img = makeImageTag(body);
+    if (img[1]) body = img[0];
   }
 
   return `${tagOpen.join('')}${body}${tagClose.reverse().join('')}`;
+};
+
+
+var makePageLink = function (body, tagOpen, tagClose) {
+  var href = (body[0] === '/') ? body : `/${project}/${body}`;
+  var className = (body[0] === '/') ? '' : 'page-link';
+  tagOpen.push(`<a href="${encodeHref(href)}" class="${className}">`);
+  tagClose.push('</a>');
+  var img = makeImageTag(body);
+  if (img[1]) {
+    tagOpen = [];
+    tagClose = [];
+    body = img[0];
+  }
+  return {tagOpen: tagOpen, tagClose: tagClose, body: body};
 };
 
 var makePear = function (words) {
@@ -155,7 +173,7 @@ var makeImageTag = function (keyword) {
 };
 
 
-/** 括弧解析 */
+/** Scrapboxの行単位での記法解析 */
 var dicts = [];
 var parse = function (fullStr, startIdx, depth, seekEnd) {
   var l = fullStr.length;
@@ -164,7 +182,15 @@ var parse = function (fullStr, startIdx, depth, seekEnd) {
     var subStr = fullStr.substring(startIdx, l);
     //console.info(depth, subStr);
 
-    if (subStr.startsWith(BRACKET_OPEN)) {
+    if (subStr.startsWith(DOUBLE_BRACKET_OPEN)) {
+      var token = parse(fullStr, startIdx + DOUBLE_BRACKET_OPEN.length, depth + 1, DOUBLE_BRACKET_CLOSE);
+      var str = DOUBLE_BRACKET_OPEN + fullStr.substring(token[0], token[1]) + DOUBLE_BRACKET_CLOSE;
+      var res = decorate(str, DOUBLE_BRACKET_OPEN, depth);
+      var trans = {};
+      trans[str] = res;
+      dicts.push(trans);
+      startIdx = token[1];
+    }else if (subStr.startsWith(BRACKET_OPEN)) {
       var token = parse(fullStr, startIdx + 1, depth + 1, BRACKET_CLOSE);
       //console.info('>', token[0], token[1], fullStr.substring(token[0], token[1]));
 
@@ -175,10 +201,11 @@ var parse = function (fullStr, startIdx, depth, seekEnd) {
       var trans = {};
       trans[str] = res;
       dicts.push(trans);
-      console.log(depth, str);
+      //console.log(depth, str);
       startIdx = token[1];
     }
 
+    // 探していた閉じマークが見つかった
     if (subStr.startsWith(seekEnd)) {
       return [startIdxkeep, startIdx];
     }
@@ -187,6 +214,7 @@ var parse = function (fullStr, startIdx, depth, seekEnd) {
   }
 
   // 置換する順番に格納されている
+  // HTML文字列を作成する
   dicts.push(fullStr);
   dicts.reverse();
 
