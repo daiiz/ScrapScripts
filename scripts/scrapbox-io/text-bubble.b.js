@@ -36,7 +36,7 @@ var decorate = function (str, strOpenMark, depth) {
         body = p1;
 
         // 太字, 斜体, 打ち消し
-        var o = !p0.match(/[^\-\*\/]/gi);
+        var o = !p0.match(/[^\-\*\/\_]/gi);
         if (o && p0.indexOf('*') >= 0) {
           tagOpen.push('<b>');
           tagClose.push('</b>');
@@ -50,6 +50,11 @@ var decorate = function (str, strOpenMark, depth) {
         if (o && p0.indexOf('-') >= 0) {
           tagOpen.push('<s>');
           tagClose.push('</s>');
+          f = false;
+        }
+        if (o && p0.indexOf('_') >= 0) {
+          tagOpen.push('<span class="daiz-underline">');
+          tagClose.push('</span>');
           f = false;
         }
 
