@@ -1,4 +1,6 @@
 // 解析の最小単位は行
+var z = 'hello[] [213]';
+var x = 'hoge[link1][/ link2 [link22] ]hoga';
 var a = "hoge[link1][link2]hoga";
 var b = "daiki [link] [link] iizuka";
 var n = "I am [daiiz https://scrapbox.io/daiiz/]!";
@@ -82,11 +84,15 @@ var decorate = function (str, strOpenMark, depth) {
       var img = makeImageTag(body);
       if (img[1]) body = img[0];
     }else {
-      // リンク, 画像
-      var pageLink = makePageLink(body, tagOpen, tagClose);
-      tagOpen = pageLink.tagOpen;
-      tagClose = pageLink.tagClose;
-      body = pageLink.body;
+      if (body.length === 0) {
+        body = '[]';
+      }else {
+        // リンク, 画像
+        var pageLink = makePageLink(body, tagOpen, tagClose);
+        tagOpen = pageLink.tagOpen;
+        tagClose = pageLink.tagClose;
+        body = pageLink.body;
+      }
     }
 
   }else if (strOpenMark === DOUBLE_BRACKET_OPEN) {
@@ -254,6 +260,9 @@ var parse = function (fullStr, startIdx, depth, seekEnd) {
 
 
 var parseRow = function (row) {
+  row = row.trim();
+  if (openCodeBlock && row.length === 0) openCodeBlock = false;
+  if (openCodeBlock) return;
   dicts = [];
   var res = parse(row, 0, 0, null);
   console.info(res);
