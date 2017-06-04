@@ -6,7 +6,7 @@ var m = "I am [daiiz https://scrapbox.io/daiiz/daiiz#eeee]! [/daiiz/daiiz#5844e9
 var s = "I am [daiiz https://scrapbox.io/daiiz/daiiz#5844e99dadf4e700000995de]! [daiiz]"
 var c = "[* bold]";
 var d = "[/ italic]";
-var cd = "[*/ italic-bold]";
+var cd = "[*/- italic-bold-s]";
 var s3 = "[a b c] & [/a b c]";
 var icon = "[daiiz.icon] [/daiiz/daiiz.icon*3]";
 var il = "foo!! [https://gyazo.com/bbbfc7fc6c0b473d10b60c86fd09da81 http://Image]"
@@ -14,7 +14,7 @@ var e = "[* [/ iizuka] foo]";
 
 var bb = "[[bold]]";
 var cc = "[* [daiiz.icon]]";
-var code = "`code`";
+var code = "wow! `code1` & `code2`";
 var f = "[/** [/ [* d] [f] ]]";
 var g = "...[/** [/ [* d]] aaa] ...";
 var h = "[a] [b] [* c[d]]"
@@ -29,6 +29,7 @@ var DOUBLE_BRACKET_OPEN = '[[';
 var BRACKET_CLOSE = ']';
 var DOUBLE_BRACKET_CLOSE = ']]';
 var INLINE_CODE = '`';
+var openInlineCode = false;
 var openCodeBlock = false;
 
 var decorate = function (str, strOpenMark, depth) {
@@ -51,18 +52,22 @@ var decorate = function (str, strOpenMark, depth) {
         tagClose.push('</a>');
       }else {
         var f = true;
+        body = p1;
 
-        // 太字, 斜体
+        // 太字, 斜体, 打ち消し
         if (p0.indexOf('*') >= 0) {
-          body = p1;
           tagOpen.push('<b>');
           tagClose.push('</b>');
           f = false;
         }
         if (p0.indexOf('/') >= 0) {
-          body = p1;
           tagOpen.push('<i>');
           tagClose.push('</i>');
+          f = false;
+        }
+        if (p0.indexOf('-') >= 0) {
+          tagOpen.push('<s>');
+          tagClose.push('</s>');
           f = false;
         }
 
@@ -90,6 +95,14 @@ var decorate = function (str, strOpenMark, depth) {
     tagClose.push('</b>');
     var img = makeImageTag(body);
     if (img[1]) body = img[0];
+
+  }else if (strOpenMark === INLINE_CODE) {
+    var code = str.replace(/^\`/, '').replace(/\`$/, '');
+    body = '';
+    for (var k = 0; k < code.length; k++) {
+      body += `<span>${code[k]}</span>`;
+    }
+    console.log(body)
   }
 
   return `${tagOpen.join('')}${body}${tagClose.reverse().join('')}`;
@@ -176,6 +189,7 @@ var makeImageTag = function (keyword) {
 /** Scrapboxの行単位での記法解析 */
 var dicts = [];
 var parse = function (fullStr, startIdx, depth, seekEnd) {
+  fullStr = fullStr.trim();
   var l = fullStr.length;
   var startIdxkeep = startIdx;
   while (startIdx < l) {
@@ -201,12 +215,22 @@ var parse = function (fullStr, startIdx, depth, seekEnd) {
       var trans = {};
       trans[str] = res;
       dicts.push(trans);
-      //console.log(depth, str);
+      startIdx = token[1];
+    }else if (subStr.startsWith(INLINE_CODE) && !openInlineCode) {
+      openInlineCode = true;
+      // このマークは入れ子構造をとり得ないことに注意
+      var token = parse(fullStr, startIdx + INLINE_CODE.length, depth + 1, INLINE_CODE);
+      var str = INLINE_CODE + fullStr.substring(token[0], token[1]) + INLINE_CODE;
+      var res = decorate(str, INLINE_CODE, depth);
+      var trans = {};
+      trans[str] = res;
+      dicts.push(trans);
       startIdx = token[1];
     }
 
     // 探していた閉じマークが見つかった
     if (subStr.startsWith(seekEnd)) {
+      if (seekEnd === INLINE_CODE) openInlineCode = false;
       return [startIdxkeep, startIdx];
     }
 
