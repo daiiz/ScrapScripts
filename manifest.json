@@ -29,7 +29,7 @@
               "scripts/scrapbox-io/main.css"
             ],
             "js": [
-                "scripts/scrapbox-io/text-bubble.a.js",
+                "scripts/scrapbox-io/text-bubble.b.js",
                 "scripts/scrapbox-io/rel-cards-bubble.js"
             ],
             "run_at": "document_end"
@@ -53,5 +53,5 @@
         "<all_urls>"
     ],
 
-    "version": "0.1.5"
+    "version": "0.2.0"
 }
