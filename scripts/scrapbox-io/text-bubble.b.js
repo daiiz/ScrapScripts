@@ -151,7 +151,10 @@ var encodeHref = function (url) {
   var toks = url.split('/');
   var pageName = toks.pop();
   var pageRowNum = pageName.match(/#.{24}$/); // 行リンク対応
-  if (pageRowNum) {
+  if (url.startsWith('http')) {
+    return url;
+  }else if (pageRowNum) {
+    // 行リンク
     var n = pageRowNum[0];
     pageName = window.encodeURIComponent(pageName.split(n)[0]) + n;
   }else {
@@ -198,7 +201,7 @@ var parse = function (fullStr, startIdx, depth, seekEnd) {
     var subStr = fullStr.substring(startIdx, l);
     //console.info(depth, subStr);
 
-    if (subStr.startsWith(DOUBLE_BRACKET_OPEN)) {
+    if (subStr.startsWith(DOUBLE_BRACKET_OPEN) && !openInlineCode) {
       var token = parse(fullStr, startIdx + DOUBLE_BRACKET_OPEN.length, depth + 1, DOUBLE_BRACKET_CLOSE);
       var str = DOUBLE_BRACKET_OPEN + fullStr.substring(token[0], token[1]) + DOUBLE_BRACKET_CLOSE;
       var res = decorate(str, DOUBLE_BRACKET_OPEN, depth);
@@ -206,7 +209,7 @@ var parse = function (fullStr, startIdx, depth, seekEnd) {
       trans[str] = res;
       dicts.push(trans);
       startIdx = token[1];
-    }else if (subStr.startsWith(BRACKET_OPEN)) {
+    }else if (subStr.startsWith(BRACKET_OPEN) && !openInlineCode) {
       var token = parse(fullStr, startIdx + 1, depth + 1, BRACKET_CLOSE);
       //console.info('>', token[0], token[1], fullStr.substring(token[0], token[1]));
 
@@ -248,6 +251,7 @@ var parse = function (fullStr, startIdx, depth, seekEnd) {
     var key = Object.keys(dicts[i])[0];
     html = html.replace(key, dicts[i][key]);
   }
+  //console.info(dicts);
   return html;
 };
 
