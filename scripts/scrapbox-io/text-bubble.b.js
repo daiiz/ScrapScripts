@@ -27,10 +27,16 @@ var decorate = function (str, strOpenMark, depth) {
       var p1 = pear[1];
       if (p0.startsWith('http')) {
         // リンク(別名記法)
-        body = spans(p1);
+        body = p1;
         var href = p0;
         tagOpen.push(`<a href="${encodeHref(href)}" class="daiiz-ref-link">`);
         tagClose.push('</a>');
+        var img = makeImageTag(body);
+        if (img[1]) {
+          body = img[0];
+        }else {
+          body = spans(p1);
+        }
       }else {
         var f = true;
         body = p1;
@@ -236,23 +242,23 @@ var parse = function (fullStr, startIdx, depth, seekEnd) {
   // HTML文字列を作成する
   dicts.push(fullStr);
   dicts.reverse();
-
-  var result = fullStr;
+  var html = fullStr;
   for (var i = 1; i < dicts.length; i++) {
     var key = Object.keys(dicts[i])[0];
-    result = result.replace(key, dicts[i][key]);
+    html = html.replace(key, dicts[i][key]);
   }
-  ///console.info(dicts);
-
-  return result;
+  return html;
 };
 
 
-/** Main **/
+/* ======================== */
+/*  Main: 行単位の記法解析  */
+/* ======================== */
 var parseRow = function (row) {
   if (row.length === 0) return null;
   var t0 = row.charAt(0);
   row = row.trim();
+  // コードブロックを無視する処理
   if (row.startsWith('code:')) {
     openCodeBlock = true;
     return null;
@@ -261,10 +267,13 @@ var parseRow = function (row) {
     if (t0 == ' ' || t0 == '\t') {
       return null;
     }else {
-      console.info(t0);
       openCodeBlock = false;
     }
   }
+
+  // シェル記法の対応
+  if (row.charAt(0) === '$') return makeShellStr(row);
+  // 括弧を用いる記法の解析
   dicts = [];
   var res = parse(row, 0, 0, null);
   // プレーンテキストに埋め込まれたリンクに対応する
@@ -276,7 +285,7 @@ var parseRow = function (row) {
 
 var makeHashTagLinks = function (row) {
   row = ' ' + row + ' ';
-  var hashTags = row.match(/(^| )\#[^ ]+ /gi);
+  var hashTags = row.match(/(^| )\#[^ ]+/gi);
   if (hashTags) {
     for (var i = 0; i < hashTags.length; i++) {
       var hashTag = hashTags[i].trim();
@@ -302,6 +311,12 @@ makePlainLinks = function (row) {
   return row.substring(1, row.length - 1);
 };
 
+var makeShellStr = function (row) {
+  return `<span class="daiiz-backquote">${spans(row)}</span>`
+};
+
+/* ================ */
+/*  表示コントール  */
 /* ================ */
 var $getRefTextBody = function (title, $root, $bubble) {
   title = window.encodeURIComponent(title);
