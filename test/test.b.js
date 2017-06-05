@@ -19,7 +19,8 @@ var b4 = "[* [/ iizuka] foo]";
 var b5 = "[/shokai/Scrapboxページの文章をMarkdownに変換するBookmarkletを書いた - #daiizメモ]";
 var b6 = "[[bold]]";
 var b7 = "[* [daiiz.icon]]";
-var b8 = "wow! `code1` & `code2`";
+var b8 = "  `[zzz]` & wow! `code1` & `code2` & `[aaa]`";
+var b81 = "`[a%20b]` -> `encodeURIComponent('a%20b')` ";
 var b9 = "[/** [/ [* d] [f] ]]";
 
 var c0 = "...[/** [/ [* d]] aaa] ...";
@@ -36,5 +37,8 @@ var c9 = "[http://daiiz.hatenablog.com/archive/category/google app engine] &&&& 
 var z0 = "[s [4]";
 var z1 = "[s [* 4]";
 
+var x0 = '`[a%20b]` -> `encodeURIComponent("a%20b")` -> `a%2520b` ->  ページ「[a%20b]」「[a%20b]」を開く';  // 後方変換に引っ張られる?
+var x1 = '[Bug https://scrapbox.io/daiiz-private/daiiz%20Script#5934d1dfadf4e700004a6451]';
 
-console.log(parseRow(c9));
+
+console.log(parseRow(x1));
