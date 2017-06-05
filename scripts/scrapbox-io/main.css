@@ -43,6 +43,10 @@
   font-size: 8.5pt;
 }
 
+.daiz-underline {
+  text-decoration: underline;
+}
+
 .daiiz-tiny-icon {
   height: 11pt;
 }
