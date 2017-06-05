@@ -150,7 +150,7 @@ var makePear = function (words) {
 var encodeHref = function (url) {
   var toks = url.split('/');
   var pageName = toks.pop();
-  var pageRowNum = pageName.match(/#.{24}$/); // 行リンク対応
+  var pageRowNum = pageName.match(/#.{24,26}$/); // 行リンク対応
   if (url.startsWith('http')) {
     return url;
   }else if (pageRowNum) {
@@ -376,7 +376,7 @@ var bindEvents = function ($appRoot) {
       $(`.daiiz-text-bubble:not([data-pos="${pos}"])`).remove();
     }
 
-    var tag = $a[0].innerText.replace(/^#/gi, '').replace(/#.{24}$/, '');
+    var tag = $a[0].innerText.replace(/^#/gi, '').replace(/#.{24,26}$/, '');
     if (tag.startsWith('/')) {
       $bubble.hide();
       return;

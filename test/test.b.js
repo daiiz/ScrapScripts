@@ -36,9 +36,9 @@ var c9 = "[http://daiiz.hatenablog.com/archive/category/google app engine] &&&& 
 
 var z0 = "[s [4]";
 var z1 = "[s [* 4]";
+var z2 = '[Bug https://scrapbox.io/daiiz-private/daiiz%20Script#5934d1dfadf4e700004a6451]';
+var z3 = '[/shokai/YAPC2016Gyazzスライド#57ba8991000000000000ff4502] が詳しい';
 
 var x0 = '`[a%20b]` -> `encodeURIComponent("a%20b")` -> `a%2520b` ->  ページ「[a%20b]」「[a%20b]」を開く';  // 後方変換に引っ張られる?
-var x1 = '[Bug https://scrapbox.io/daiiz-private/daiiz%20Script#5934d1dfadf4e700004a6451]';
-
-
-console.log(parseRow(x1));
+var x1 = '[a%20b] -> `encodeURIComponent("a%20b")` -> `a%2520b` ->  ページ「[a%20b]」「[a%20b]」を開く';
+console.log(parseRow(z2));
