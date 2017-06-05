@@ -30,9 +30,11 @@ var c4 = "[https://hashrock-sandbox.github.io/scrapbox-map/ https://gyazo.com/74
 var c5 = "#動物 #Scrapbox #aa";
 var c6 = "いる．https://twitter.com/daizplus/status/869335896482394113";
 var c7 = " $ ddd d d dddd [9]";
+var c8 = "[http://daiiz.hatenablog.com/archive/category/google%20app%20engine]";
+var c9 = "[http://daiiz.hatenablog.com/archive/category/google app engine] &&&& http://daiiz.hatenablog.com/archive/category/google%20app%20engine";
 
 var z0 = "[s [4]";
 var z1 = "[s [* 4]";
 
 
-console.log(parseRow(a0));
+console.log(parseRow(c9));

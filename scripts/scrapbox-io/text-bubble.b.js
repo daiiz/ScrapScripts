@@ -111,8 +111,9 @@ var spans = function (txt) {
 };
 
 var makePageLink = function (body, tagOpen, tagClose) {
-  var href = (body[0] === '/') ? body : `/${detectProject()}/${body}`;
+  var href = (body[0] === '/' || body.startsWith('http')) ? body : `/${detectProject()}/${body}`;
   var className = (body[0] === '/') ? '' : 'page-link';
+  if (body.startsWith('http')) className = 'daiiz-ref-link';
   tagOpen.push(`<a href="${encodeHref(href)}" class="${className}">`);
   tagClose.push('</a>');
   var img = makeImageTag(body);
