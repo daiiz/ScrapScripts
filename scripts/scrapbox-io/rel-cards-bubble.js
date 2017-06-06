@@ -1,4 +1,4 @@
-var bindEvents = function ($appRoot) {
+var daiizRelCardsMain = function ($appRoot) {
   /* 関連カード */
   var timer = null;
   $appRoot.on('mouseenter', 'a.page-link', function (e) {
@@ -102,13 +102,7 @@ var $getRelCards = function (title) {
   return $cards;
 };
 
-var installed = function (functionName) {
-  var d = `data-${functionName}`;
-  if ($('body').attr(d) && $('body').attr(d) === 'on') return true;
-  return false;
-};
-
 $(function () {
   var $appRoot = $('#app-container');
-  bindEvents($appRoot);
+  daiizRelCardsMain($appRoot);
 });

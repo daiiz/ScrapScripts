@@ -7,12 +7,6 @@ var INLINE_CODE = '`';
 var openInlineCode = false;
 var openCodeBlock = false;
 
-var detectProject = function () {
-  var r = window.location.href.match(/scrapbox.io\/([^\/.]*)/);
-  if (r && r.length >= 2) return window.encodeURIComponent(r[1]);
-  return 'daiiz';
-};
-
 var decorate = function (str, strOpenMark, depth) {
   var html = '';
   var tagOpen = [];
@@ -341,13 +335,7 @@ var $getRefTextBody = function (title, $root, $bubble) {
   });
 };
 
-var installed = function (functionName) {
-  var d = `data-${functionName}`;
-  if ($('body').attr(d) && $('body').attr(d) === 'on') return true;
-  return false;
-};
-
-var bindEvents = function ($appRoot) {
+var daiizTextBubbleMain = function ($appRoot) {
   var timer = null;
   $appRoot.on('mouseenter', 'a.page-link', function (e) {
     if (!installed('daiiz-text-bubble')) return;
@@ -417,6 +405,6 @@ var $getTextBubble = function () {
 
 $(function () {
   var $appRoot = $('#app-container');
-  bindEvents($appRoot);
+  daiizTextBubbleMain($appRoot);
 });
 /* ================ */
