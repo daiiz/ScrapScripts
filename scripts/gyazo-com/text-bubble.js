@@ -1,15 +1,17 @@
 // Gyazo
+var DAIIZ_GYAZO_TEXT_BUBBLE = 'daiiz-gyazo-text-bubble';
 
-var daiizGyazoDescLink = function ($appRoot) {
+var daiizGyazoDescLink = function ($appRoot, projectName) {
   // Gyazoの写真の説明文の [] をリンク化する
   $appRoot.on('mouseover', '.image-desc-display', function (e) {
     var $t = $(e.target).closest('.image-desc-display');
     var desc = $t[0].innerHTML;
     var keywords = desc.match(/\[[^\[\]]+\]/gi);
     if (!keywords) return;
+
     for (var i = 0; i < keywords.length; i++) {
       var keyword = keywords[i].replace('[', '').replace(']', '');
-      var projectPage = `/${detectProject()}/${keyword}`;
+      var projectPage = `/${projectName}/${keyword}`;
       desc = desc.replace(keywords[i], `<a class="page-link"
           href="${getScrapboxUrl(projectPage)}">${keyword}</a>`);
     }
@@ -17,11 +19,9 @@ var daiizGyazoDescLink = function ($appRoot) {
   });
 };
 
-var daiizGyazoTextBubbleInit = function ($appRoot, targetSelector) {
+var daiizGyazoTextBubbleInit = function ($appRoot, targetSelector, projectName) {
   var timer = null;
   $appRoot.on('mouseenter', targetSelector, function (e) {
-    //if (!installed('daiiz-text-bubble')) return;
-
     var $a = $(e.target).closest(targetSelector);
     $a.attr('title', '');
 
@@ -52,7 +52,7 @@ var daiizGyazoTextBubbleInit = function ($appRoot, targetSelector) {
     }
 
     timer = window.setTimeout(function () {
-      $getRefTextBody(tag.trim(), $appRoot, $bubble);
+      $getRefTextBody(tag.trim(), $appRoot, $bubble, projectName);
     }, 650);
   });
 
@@ -79,8 +79,11 @@ var daiizGyazoTextBubbleInit = function ($appRoot, targetSelector) {
   });
 };
 
-var daiizGyazoTextBubbleMain = function ($appRoot) {
-  daiizGyazoTextBubbleInit($appRoot, 'a.hashtag');
-  daiizGyazoTextBubbleInit($appRoot, 'a.page-link');
-  daiizGyazoDescLink($appRoot);
+var daiizGyazoTextBubbleMain = function ($appRoot, projectNames) {
+  if (projectNames[DAIIZ_GYAZO_TEXT_BUBBLE]) {
+    var projectName = projectNames[DAIIZ_GYAZO_TEXT_BUBBLE];
+    daiizGyazoTextBubbleInit($appRoot, 'a.hashtag', projectName);
+    daiizGyazoTextBubbleInit($appRoot, 'a.page-link', projectName);
+    daiizGyazoDescLink($appRoot, projectName);
+  }
 };
