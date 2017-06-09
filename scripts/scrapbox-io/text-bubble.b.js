@@ -217,13 +217,9 @@ var parse = function (fullStr, startIdx, depth, seekEnd) {
       dicts.push(trans);
       startIdx = token[1];
     }else if (subStr.startsWith(BRACKET_OPEN) && !openInlineCode) {
-      var token = parse(fullStr, startIdx + 1, depth + 1, BRACKET_CLOSE);
-      //console.info('>', token[0], token[1], fullStr.substring(token[0], token[1]));
-
-      // 記法記号を含む抽出文字列
+      var token = parse(fullStr, startIdx + BRACKET_OPEN.length, depth + 1, BRACKET_CLOSE);
       var str = BRACKET_OPEN + fullStr.substring(token[0], token[1]) + BRACKET_CLOSE;
       var res = decorate(str, BRACKET_OPEN, depth);
-      //res = res.replace(str, html);
       var trans = {};
       trans[str] = res;
       dicts.push(trans);
