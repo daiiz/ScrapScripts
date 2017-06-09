@@ -43,6 +43,10 @@
   font-size: 8.5pt;
 }
 
+.daiiz-external-project {
+  background-color: #fafafa;
+}
+
 .daiz-underline {
   text-decoration: underline;
 }

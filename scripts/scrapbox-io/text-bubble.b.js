@@ -63,7 +63,9 @@ var decorate = function (str, strOpenMark, depth) {
           // 半角空白を含むタイトルのページ
           body = words.join(' ');
           var href = (body[0] === '/') ? body : `/${PROJECT_NAME}/${body}`;
-          tagOpen.push(`<a href="${encodeHref(getScrapboxUrl(href), false)}" class="page-link">`);
+          var target = (PROJECT_NAME !== detectProject()) ? '_blank' : '_self';
+          tagOpen.push(`<a href="${encodeHref(getScrapboxUrl(href), false)}"
+            class="page-link" target="${target}">`);
           tagClose.push('</a>');
           body = spans(body);
         }
@@ -71,6 +73,7 @@ var decorate = function (str, strOpenMark, depth) {
       var img = makeImageTag(body);
       if (img[1]) body = img[0];
     }else {
+      // [ ] 内に空白を含まない
       if (body.length === 0) {
         body = '[]';
       }else {
@@ -119,8 +122,8 @@ var makePageLink = function (body, tagOpen, tagClose) {
     startsWithHttp = true;
   }
 
-  var className = (body[0] === '/') ? '' : 'page-link';
-  var target = '_self';
+  var className = 'page-link';
+  var target = (PROJECT_NAME !== detectProject()) ? '_blank' : '_self';
   if (body.startsWith('http')) {
     className = 'daiiz-ref-link';
     target = '_blank';
@@ -132,6 +135,8 @@ var makePageLink = function (body, tagOpen, tagClose) {
     tagOpen = [];
     tagClose = [];
     body = img[0];
+  }else {
+    body = spans(body);
   }
   return {tagOpen: tagOpen, tagClose: tagClose, body: body};
 };
@@ -302,7 +307,9 @@ var makeHashTagLinks = function (row) {
     for (var i = 0; i < hashTags.length; i++) {
       var hashTag = hashTags[i].trim();
       var keyword = hashTag.substring(1, hashTag.length);
-      var a = ` <a href="/${PROJECT_NAME}/${keyword}" class="page-link">${hashTag}</a> `;
+      var target = (PROJECT_NAME !== detectProject()) ? '_blank' : '_self';
+      var a = ` <a href="/${PROJECT_NAME}/${keyword}" class="page-link"
+        target="${target}">${spans(hashTag)}</a> `;
       row = row.replace(` ${hashTag} `, a);
     }
   }
@@ -331,14 +338,25 @@ var makeShellStr = function (row) {
 /*  表示コントール  */
 /* ================ */
 var $getRefTextBody = function (title, $root, $bubble, projectName) {
+  var externalProject = false;
+  if (title.startsWith('/')) {
+    // 外部プロジェクト名とページ名を抽出
+    var tt = title.match(/\/([^\/]+)\/(.+)/);
+    if (!tt) return;
+    var projectName = tt[1];
+    var title = tt[2];
+  }
+  if (projectName !== detectProject()) externalProject = true;
+
   title = window.encodeURIComponent(title);
   PROJECT_NAME = projectName;
-  if (!projectName) PROJECT_NAME = detectProject();
 
   $.ajax({
     type: 'GET',
     url: `https://scrapbox.io/api/pages/${PROJECT_NAME}/${title}/text`
   }).success(function (data) {
+    if (externalProject) $bubble.addClass('daiiz-external-project');
+    $bubble.attr('data-project', PROJECT_NAME);
     $root.append($bubble);
     var rows = data.split('\n');
     var contents = [];
@@ -357,6 +375,7 @@ var daiizTextBubbleMain = function ($appRoot) {
     if (!installed('daiiz-text-bubble')) return;
 
     var $a = $(e.target).closest('a.page-link');
+    var $parentBubble = $(e.target).closest('div.daiiz-text-bubble');
     $root = $appRoot.find('.page');
 
     if ($a.hasClass('empty-page-link')) return;
@@ -381,13 +400,11 @@ var daiizTextBubbleMain = function ($appRoot) {
     }
 
     var tag = $a[0].innerText.replace(/^#/gi, '').replace(/#.{24,32}$/, '');
-    if (tag.startsWith('/')) {
-      $bubble.hide();
-      return;
-    }
 
     timer = window.setTimeout(function () {
-      $getRefTextBody(tag.trim(), $root, $bubble);
+      var projectName = detectProject();
+      if ($parentBubble.length > 0) projectName = $parentBubble.attr('data-project');
+      $getRefTextBody(tag.trim(), $root, $bubble, projectName);
     }, 650);
   });
 
