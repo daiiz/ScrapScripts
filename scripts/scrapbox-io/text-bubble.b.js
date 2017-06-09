@@ -150,7 +150,7 @@ var makePear = function (words) {
 
   if (pear[0].startsWith('http') && pear[1].startsWith('http')) {
     var a = (pear[0].endsWith('.jpg') || pear[0].endsWith('.png') || pear[0].endsWith('.gif'));
-    var b = (pear[0].startsWith('https://gyazo.com/') || pear[0].startsWith('http://gyazo.com/'));
+    var b = (pear[0].match(/^https{0,1}:\/\/gyazo.com\/.{24,32}$/) !== null);
     if (a || b) {
       pear.reverse();
     }
@@ -192,7 +192,7 @@ var makeImageTag = function (keyword) {
     }
   }else if (keyword.endsWith('.jpg') || keyword.endsWith('.png') || keyword.endsWith('.gif')) {
     img = `<img class="daiiz-small-img" src="${keyword}">`;
-  }else if (keyword.startsWith('https://gyazo.com/') || keyword.startsWith('http://gyazo.com/')) {
+  }else if (keyword.match(/^https{0,1}:\/\/gyazo.com\/.{24,32}$/)) {
     img = `<img class="daiiz-small-img" src="${keyword}/raw">`;
   }else {
     img = keyword;
