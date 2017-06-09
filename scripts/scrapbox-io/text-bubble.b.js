@@ -24,7 +24,7 @@ var decorate = function (str, strOpenMark, depth) {
         // リンク(別名記法)
         body = p1;
         var href = p0;
-        tagOpen.push(`<a href="${encodeHref(href, true)}" class="daiiz-ref-link">`);
+        tagOpen.push(`<a href="${encodeHref(href, true)}" class="daiiz-ref-link" target="_blank">`);
         tagClose.push('</a>');
         var img = makeImageTag(body);
         if (img[1]) {
@@ -120,8 +120,12 @@ var makePageLink = function (body, tagOpen, tagClose) {
   }
 
   var className = (body[0] === '/') ? '' : 'page-link';
-  if (body.startsWith('http')) className = 'daiiz-ref-link';
-  tagOpen.push(`<a href="${encodeHref(href, startsWithHttp)}" class="${className}">`);
+  var target = '_self';
+  if (body.startsWith('http')) {
+    className = 'daiiz-ref-link';
+    target = '_blank';
+  }
+  tagOpen.push(`<a href="${encodeHref(href, startsWithHttp)}" class="${className}" target="${target}">`);
   tagClose.push('</a>');
   var img = makeImageTag(body);
   if (img[1]) {
@@ -312,7 +316,7 @@ makePlainLinks = function (row) {
   for (var k = 0; k < words.length; k++) {
     var word = words[k].trim();
     if (word.startsWith('http')) {
-      var a = ` <a href=${encodeHref(word, true)} class="daiiz-ref-link">${word}</a> `;
+      var a = ` <a href=${encodeHref(word, true)} class="daiiz-ref-link" target="_blank">${word}</a> `;
       row = row.replace(` ${word} `, a);
     }
   }
