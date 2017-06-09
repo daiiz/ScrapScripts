@@ -6,6 +6,7 @@ var DOUBLE_BRACKET_CLOSE = ']]';
 var INLINE_CODE = '`';
 var openInlineCode = false;
 var openCodeBlock = false;
+var PROJECT_NAME = null;
 
 var decorate = function (str, strOpenMark, depth) {
   var html = '';
@@ -61,7 +62,7 @@ var decorate = function (str, strOpenMark, depth) {
         if (f) {
           // 半角空白を含むタイトルのページ
           body = words.join(' ');
-          var href = (body[0] === '/') ? body : `/${detectProject()}/${body}`;
+          var href = (body[0] === '/') ? body : `/${PROJECT_NAME}/${body}`;
           tagOpen.push(`<a href="${encodeHref(getScrapboxUrl(href), false)}" class="page-link">`);
           tagClose.push('</a>');
           body = spans(body);
@@ -109,7 +110,7 @@ var getScrapboxUrl = function (url) {
 };
 
 var makePageLink = function (body, tagOpen, tagClose) {
-  var href = getScrapboxUrl(`/${detectProject()}/${body}`);
+  var href = getScrapboxUrl(`/${PROJECT_NAME}/${body}`);
   var startsWithHttp = false;
   if (body[0] === '/') {
     href = getScrapboxUrl(body);
@@ -117,7 +118,7 @@ var makePageLink = function (body, tagOpen, tagClose) {
     href = body;
     startsWithHttp = true;
   }
-  //var href = (body[0] === '/' || body.startsWith('http')) ? body : `/${detectProject()}/${body}`;
+
   var className = (body[0] === '/') ? '' : 'page-link';
   if (body.startsWith('http')) className = 'daiiz-ref-link';
   tagOpen.push(`<a href="${encodeHref(href, startsWithHttp)}" class="${className}">`);
@@ -177,7 +178,7 @@ var makeImageTag = function (keyword) {
   if (keyword.match(/\.icon\**\d*$/gi)) {
     var iconName = keyword.split('.icon')[0];
     if (iconName.charAt(0) !== '/') {
-      iconName = '/' + detectProject() + '/' + iconName;
+      iconName = '/' + PROJECT_NAME + '/' + iconName;
     }
     var toks = keyword.split('*');
     var times = 1;
@@ -301,7 +302,7 @@ var makeHashTagLinks = function (row) {
     for (var i = 0; i < hashTags.length; i++) {
       var hashTag = hashTags[i].trim();
       var keyword = hashTag.substring(1, hashTag.length);
-      var a = ` <a href="/${detectProject()}/${keyword}" class="page-link">${hashTag}</a> `;
+      var a = ` <a href="/${PROJECT_NAME}/${keyword}" class="page-link">${hashTag}</a> `;
       row = row.replace(` ${hashTag} `, a);
     }
   }
@@ -329,11 +330,14 @@ var makeShellStr = function (row) {
 /* ================ */
 /*  表示コントール  */
 /* ================ */
-var $getRefTextBody = function (title, $root, $bubble) {
+var $getRefTextBody = function (title, $root, $bubble, projectName) {
   title = window.encodeURIComponent(title);
+  PROJECT_NAME = projectName;
+  if (!projectName) PROJECT_NAME = detectProject();
+
   $.ajax({
     type: 'GET',
-    url: `https://scrapbox.io/api/pages/${detectProject()}/${title}/text`
+    url: `https://scrapbox.io/api/pages/${PROJECT_NAME}/${title}/text`
   }).success(function (data) {
     $root.append($bubble);
     var rows = data.split('\n');

@@ -101,8 +101,3 @@ var $getRelCards = function (title) {
   }
   return $cards;
 };
-
-$(function () {
-  var $appRoot = $('#app-container');
-  daiizRelCardsMain($appRoot);
-});
