@@ -1,5 +1,4 @@
 // Gyazo
-var DAIIZ_GYAZO_TEXT_BUBBLE = 'daiiz-gyazo-text-bubble';
 
 var daiizGyazoDescLink = function ($appRoot, projectName) {
   // Gyazoの写真の説明文の [] をリンク化する
@@ -24,6 +23,7 @@ var daiizGyazoTextBubbleInit = function ($appRoot, targetSelector, projectName) 
   $appRoot.on('mouseenter', targetSelector, function (e) {
     var $a = $(e.target).closest(targetSelector);
     $a.attr('title', '');
+    var $parentBubble = $(e.target).closest('div.daiiz-text-bubble');
 
     var $bubble = $getTextBubble();
     var rect = $a[0].getBoundingClientRect();
@@ -46,12 +46,9 @@ var daiizGyazoTextBubbleInit = function ($appRoot, targetSelector, projectName) 
     }
 
     var tag = $a[0].innerText.replace(/^#/gi, '').replace(/#.{24,32}$/, '');
-    if (tag.startsWith('/')) {
-      $bubble.hide();
-      return;
-    }
 
     timer = window.setTimeout(function () {
+      if ($parentBubble.length > 0) projectName = $parentBubble.attr('data-project');
       $getRefTextBody(tag.trim(), $appRoot, $bubble, projectName);
     }, 650);
   });
@@ -79,11 +76,8 @@ var daiizGyazoTextBubbleInit = function ($appRoot, targetSelector, projectName) 
   });
 };
 
-var daiizGyazoTextBubbleMain = function ($appRoot, projectNames) {
-  if (projectNames[DAIIZ_GYAZO_TEXT_BUBBLE]) {
-    var projectName = projectNames[DAIIZ_GYAZO_TEXT_BUBBLE];
-    daiizGyazoTextBubbleInit($appRoot, 'a.hashtag', projectName);
-    daiizGyazoTextBubbleInit($appRoot, 'a.page-link', projectName);
-    daiizGyazoDescLink($appRoot, projectName);
-  }
+var daiizGyazoTextBubbleMain = function ($appRoot, projectName) {
+  daiizGyazoTextBubbleInit($appRoot, 'a.hashtag', projectName);
+  daiizGyazoTextBubbleInit($appRoot, 'a.page-link', projectName);
+  daiizGyazoDescLink($appRoot, projectName);
 };

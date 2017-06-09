@@ -1,8 +1,8 @@
-var detectProject = function (callback) {
-  //var r = window.location.href.match(/scrapbox.io\/([^\/.]*)/);
-  //if (r && r.length >= 2) return window.encodeURIComponent(r[1]);
-  if (callback) callback();
-  return 'daiiz-private';
+var ROOT_PROJECT_NAME = null;
+var DAIIZ_GYAZO_TEXT_BUBBLE = 'daiiz-gyazo-text-bubble';
+
+var detectProject = function () {
+  return ROOT_PROJECT_NAME;
 };
 
 $(function () {
@@ -13,6 +13,9 @@ $(function () {
     func_names: ['daiiz-gyazo-text-bubble'],
   }, function (projectNames) {
     console.info('ScrapScripts', projectNames);
-    daiizGyazoTextBubbleMain($appRoot, projectNames);
+    if (projectNames[DAIIZ_GYAZO_TEXT_BUBBLE]) {
+      ROOT_PROJECT_NAME = projectNames[DAIIZ_GYAZO_TEXT_BUBBLE];
+      daiizGyazoTextBubbleMain($appRoot, ROOT_PROJECT_NAME);
+    }
   });
 });
