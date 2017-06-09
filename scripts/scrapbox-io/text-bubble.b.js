@@ -23,7 +23,7 @@ var decorate = function (str, strOpenMark, depth) {
         // リンク(別名記法)
         body = p1;
         var href = p0;
-        tagOpen.push(`<a href="${encodeHref(href)}" class="daiiz-ref-link">`);
+        tagOpen.push(`<a href="${encodeHref(href, true)}" class="daiiz-ref-link">`);
         tagClose.push('</a>');
         var img = makeImageTag(body);
         if (img[1]) {
@@ -62,7 +62,7 @@ var decorate = function (str, strOpenMark, depth) {
           // 半角空白を含むタイトルのページ
           body = words.join(' ');
           var href = (body[0] === '/') ? body : `/${detectProject()}/${body}`;
-          tagOpen.push(`<a href="${encodeHref(href)}" class="page-link">`);
+          tagOpen.push(`<a href="${encodeHref(getScrapboxUrl(href), false)}" class="page-link">`);
           tagClose.push('</a>');
           body = spans(body);
         }
@@ -104,11 +104,23 @@ var spans = function (txt) {
   return body;
 };
 
+var getScrapboxUrl = function (url) {
+  return 'https://scrapbox.io' + url;
+};
+
 var makePageLink = function (body, tagOpen, tagClose) {
-  var href = (body[0] === '/' || body.startsWith('http')) ? body : `/${detectProject()}/${body}`;
+  var href = getScrapboxUrl(`/${detectProject()}/${body}`);
+  var startsWithHttp = false;
+  if (body[0] === '/') {
+    href = getScrapboxUrl(body);
+  }else if (body.startsWith('http')) {
+    href = body;
+    startsWithHttp = true;
+  }
+  //var href = (body[0] === '/' || body.startsWith('http')) ? body : `/${detectProject()}/${body}`;
   var className = (body[0] === '/') ? '' : 'page-link';
   if (body.startsWith('http')) className = 'daiiz-ref-link';
-  tagOpen.push(`<a href="${encodeHref(href)}" class="${className}">`);
+  tagOpen.push(`<a href="${encodeHref(href, startsWithHttp)}" class="${className}">`);
   tagClose.push('</a>');
   var img = makeImageTag(body);
   if (img[1]) {
@@ -141,11 +153,11 @@ var makePear = function (words) {
   return pear;
 }
 
-var encodeHref = function (url) {
+var encodeHref = function (url, startsWithHttp) {
   var toks = url.split('/');
   var pageName = toks.pop();
-  var pageRowNum = pageName.match(/#.{24,26}$/); // 行リンク対応
-  if (url.startsWith('http')) {
+  var pageRowNum = pageName.match(/#.{24,32}$/);
+  if (startsWithHttp) {
     return url;
   }else if (pageRowNum) {
     // 行リンク
@@ -303,7 +315,7 @@ makePlainLinks = function (row) {
   for (var k = 0; k < words.length; k++) {
     var word = words[k].trim();
     if (word.startsWith('http')) {
-      var a = ` <a href=${encodeHref(word)} class="daiiz-ref-link">${word}</a> `;
+      var a = ` <a href=${encodeHref(word, true)} class="daiiz-ref-link">${word}</a> `;
       row = row.replace(` ${word} `, a);
     }
   }
@@ -364,7 +376,7 @@ var daiizTextBubbleMain = function ($appRoot) {
       $(`.daiiz-text-bubble:not([data-pos="${pos}"])`).remove();
     }
 
-    var tag = $a[0].innerText.replace(/^#/gi, '').replace(/#.{24,26}$/, '');
+    var tag = $a[0].innerText.replace(/^#/gi, '').replace(/#.{24,32}$/, '');
     if (tag.startsWith('/')) {
       $bubble.hide();
       return;
@@ -402,9 +414,4 @@ var $getTextBubble = function () {
   var $textBubble = $('<div class="daiiz-text-bubble related-page-list daiiz-card"></div>');
   return $textBubble;
 };
-
-$(function () {
-  var $appRoot = $('#app-container');
-  daiizTextBubbleMain($appRoot);
-});
 /* ================ */

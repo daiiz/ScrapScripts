@@ -45,7 +45,7 @@ var daiizGyazoTextBubbleInit = function ($appRoot, targetSelector) {
       $(`.daiiz-text-bubble:not([data-pos="${pos}"])`).remove();
     }
 
-    var tag = $a[0].innerText.replace(/^#/gi, '').replace(/#.{24,26}$/, '');
+    var tag = $a[0].innerText.replace(/^#/gi, '').replace(/#.{24,32}$/, '');
     if (tag.startsWith('/')) {
       $bubble.hide();
       return;
