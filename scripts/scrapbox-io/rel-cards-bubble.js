@@ -2,9 +2,11 @@ var daiizRelCardsMain = function ($appRoot) {
   /* 関連カード */
   var timer = null;
   $appRoot.on('mouseenter', 'a.page-link', function (e) {
+    var $relationLabels = $('li.relation-label');
     if (!installed('daiiz-rel-bubble')) return;
+    if ($relationLabels.length === 0) return;
 
-    var relLabelHeight = +($('li.relation-label').css('height').split('px')[0]);
+    var relLabelHeight = +($relationLabels.css('height').split('px')[0]);
     var pad = 10;  // main.cssでの設定値
     var $a = $(e.target).closest('a.page-link');
     if ($a.hasClass('empty-page-link')) return;
@@ -15,7 +17,7 @@ var daiizRelCardsMain = function ($appRoot) {
       'max-width': $('.editor-wrapper')[0].offsetWidth - $a[0].offsetLeft,
       'left': rect.left + window.pageXOffset,
       // .related-page-listのmargin-top=24pxぶん引く
-      'top': rect.top + window.pageYOffset - relLabelHeight - (pad * 2) - 24 - 5,  // +$a[0].offsetHeight
+      'top': rect.top + window.pageYOffset - relLabelHeight - (pad * 2) - 24 - 5,
       'background-color': $('body').css('background-color')
     });
     var tag = $a[0].innerText.replace(/^#/gi, '').split('#')[0];
