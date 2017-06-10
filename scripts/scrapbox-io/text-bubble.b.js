@@ -337,32 +337,33 @@ var makeShellStr = function (row) {
 /* ================ */
 /*  表示コントール  */
 /* ================ */
-var previewFullText = function ($root, $bubble, title) {
-  var externalProject = false;
-  if (PROJECT_NAME !== detectProject()) externalProject = true;
-  $.ajax({
-    type: 'GET',
-    url: `https://scrapbox.io/api/pages/${PROJECT_NAME}/${title}/text`
-  }).success(function (data) {
-    if (externalProject) $bubble.addClass('daiiz-external-project');
-    $bubble.attr('data-project', PROJECT_NAME);
-    $root.append($bubble);
+// var previewFullText = function ($root, $bubble, title) {
+//   var externalProject = false;
+//   if (PROJECT_NAME !== detectProject()) externalProject = true;
+//   $.ajax({
+//     type: 'GET',
+//     url: `https://scrapbox.io/api/pages/${PROJECT_NAME}/${title}/text`
+//   }).success(function (data) {
+//     if (externalProject) $bubble.addClass('daiiz-external-project');
+//     $bubble.attr('data-project', PROJECT_NAME);
+//     $root.append($bubble);
+//
+//     var rows = data.split('\n');
+//     var contents = [];
+//     for (var l = 1; l < rows.length; l++) {
+//       var row = parseRow(rows[l]);
+//       if (row) contents.push(row);
+//     }
+//     if (contents.length > 0) {
+//       $bubble.html(`<div class="daiiz-bubble-text">${contents.join('<br>')}</div>`);
+//       $bubble.show();
+//     }
+//   });
+// };
 
-    var rows = data.split('\n');
-    var contents = [];
-    for (var l = 1; l < rows.length; l++) {
-      var row = parseRow(rows[l]);
-      if (row) contents.push(row);
-    }
-    if (contents.length > 0) {
-      $bubble.html(`<div class="daiiz-bubble-text">${contents.join('<br>')}</div>`);
-      $bubble.show();
-    }
-  });
-};
-
-var previewLineText = function ($root, $bubble, title, rowHash) {
+var previewPageText = function ($root, $bubble, title, rowHash) {
   var externalProject = false;
+  var extraClassName = '';
   if (PROJECT_NAME !== detectProject()) externalProject = true;
   $.ajax({
     type: 'GET',
@@ -375,17 +376,22 @@ var previewLineText = function ($root, $bubble, title, rowHash) {
 
     var lines = data.lines;
     var contents = [];
-    for (var l = 0; l < lines.length; l++) {
+    for (var l = 1; l < lines.length; l++) {
       var line = lines[l];
-      if (line.id === rowHash) {
+      if (rowHash) {
+        if (line.id === rowHash) {
+          extraClassName = 'daiiz-line-permalink';
+          var row = parseRow(line.text);
+          if (row) contents.push(row);
+          break;
+        }
+      }else {
         var row = parseRow(line.text);
         if (row) contents.push(row);
-        break;
       }
     }
     if (contents.length > 0) {
-      $bubble.html(`<div class="daiiz-bubble-text daiiz-line-permalink">
-        ${contents.join('<br>')}</div>`);
+      $bubble.html(`<div class="daiiz-bubble-text ${extraClassName}">${contents.join('<br>')}</div>`);
       $bubble.show();
     }
   });
@@ -411,9 +417,9 @@ var $getRefTextBody = function (title, $root, $bubble, projectName) {
   PROJECT_NAME = projectName;
 
   if (lineHash === null) {
-    previewFullText($root, $bubble, title);
+    previewPageText($root, $bubble, title);
   }else {
-    previewLineText($root, $bubble, title, lineHash);
+    previewPageText($root, $bubble, title, lineHash);
   }
 };
 
