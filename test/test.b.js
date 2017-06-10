@@ -41,4 +41,35 @@ var z3 = '[/shokai/YAPC2016Gyazzスライド#57ba8991000000000000ff4502] が詳�
 
 var x0 = '`[a%20b]` -> `encodeURIComponent("a%20b")` -> `a%2520b` ->  ページ「[a%20b]」「[a%20b]」を開く';  // 後方変換に引っ張られる?
 var x1 = '[a%20b] -> `encodeURIComponent("a%20b")` -> `a%2520b` ->  ページ「[a%20b]」「[a%20b]」を開く';
-console.log(parseRow(z2));
+
+var s0 = '<script>console.log(7)< /script>[[<script>console.log(8)</script> <script>console.log(88)</script>]]<script>console.log(9)</script>daiki! #<script>';
+var s1 = '< script>33</script> </* s */script>33 console.log(88)</script> <script>console.log("xss 8")</script>'
+
+var r = parseRow(s0);
+
+// var html = ''
+// for (var j = 0; j < r.length; j++) {
+//   var c = r.charAt(j);
+//   if (c === '<' && r.substring(j + 1, r.length).startsWith('script'))  html += spans('<');
+//   else if (c === '<' && r.substring(j + 1, r.length).startsWith('/script')) html += spans('<');
+//   else html += c;
+// }
+
+$('#res').append(`<div>${r}</div>`);
+
+// var d0s = [];
+// var start = texts[0];
+// var now = texts[0];
+// for (var j = 0; j < texts.length; j++) {
+//   var idx = texts[j];
+//   console.info(now, idx)
+//   if (idx - now > 1 || j === texts.length - 1) {
+//     d0s.push(s0.substring(start, now + 1));
+//     start = idx + 1;
+//   }
+//   now = idx;
+// }
+//
+// console.log(r, dicts, d0s);
+
+//http://localhost:8000/test/test.html
