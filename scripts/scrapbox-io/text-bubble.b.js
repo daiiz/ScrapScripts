@@ -6,7 +6,9 @@ var DOUBLE_BRACKET_CLOSE = ']]';
 var INLINE_CODE = '`';
 var openInlineCode = false;
 var openCodeBlock = false;
+
 var PROJECT_NAME = null;
+var EMPTY_LINKS = [];
 
 var decorate = function (str, strOpenMark, depth) {
   var html = '';
@@ -64,10 +66,12 @@ var decorate = function (str, strOpenMark, depth) {
           body = words.join(' ');
           var href = (body[0] === '/') ? body : `/${PROJECT_NAME}/${body}`;
           var target = (PROJECT_NAME !== detectProject()) ? '_blank' : '_self';
-          tagOpen.push(`<a href="${encodeHref(getScrapboxUrl(href), false)}"
-            class="page-link" target="${target}">`);
-          tagClose.push('</a>');
+          var classEmptyLink = '';
+          if (EMPTY_LINKS.indexOf(body) !== -1) classEmptyLink = 'empty-page-link';
           body = spans(body);
+          tagOpen.push(`<a href="${encodeHref(getScrapboxUrl(href), false)}"
+            class="page-link ${classEmptyLink}" target="${target}">`);
+          tagClose.push('</a>');
         }
       }
       var img = makeImageTag(body);
@@ -113,6 +117,8 @@ var getScrapboxUrl = function (url) {
 };
 
 var makePageLink = function (body, tagOpen, tagClose) {
+  var link = {tagOpen: [], tagClose: [], body: ''};
+
   var href = getScrapboxUrl(`/${PROJECT_NAME}/${body}`);
   var startsWithHttp = false;
   if (body[0] === '/') {
@@ -128,17 +134,18 @@ var makePageLink = function (body, tagOpen, tagClose) {
     className = 'daiiz-ref-link';
     target = '_blank';
   }
-  tagOpen.push(`<a href="${encodeHref(href, startsWithHttp)}" class="${className}" target="${target}">`);
-  tagClose.push('</a>');
   var img = makeImageTag(body);
   if (img[1]) {
-    tagOpen = [];
-    tagClose = [];
-    body = img[0];
+    link.tagOpen = [];
+    link.tagClose = [];
+    link.body = img[0];
   }else {
-    body = spans(body);
+    if (EMPTY_LINKS.indexOf(body) !== -1) className += ' empty-page-link';
+    link.body = spans(body);
+    link.tagOpen.push(`<a href="${encodeHref(href, startsWithHttp)}" class="${className}" target="${target}">`);
+    link.tagClose.push('</a>');
   }
-  return {tagOpen: tagOpen, tagClose: tagClose, body: body};
+  return link;
 };
 
 var makePair = function (words) {
@@ -337,30 +344,6 @@ var makeShellStr = function (row) {
 /* ================ */
 /*  表示コントール  */
 /* ================ */
-// var previewFullText = function ($root, $bubble, title) {
-//   var externalProject = false;
-//   if (PROJECT_NAME !== detectProject()) externalProject = true;
-//   $.ajax({
-//     type: 'GET',
-//     url: `https://scrapbox.io/api/pages/${PROJECT_NAME}/${title}/text`
-//   }).success(function (data) {
-//     if (externalProject) $bubble.addClass('daiiz-external-project');
-//     $bubble.attr('data-project', PROJECT_NAME);
-//     $root.append($bubble);
-//
-//     var rows = data.split('\n');
-//     var contents = [];
-//     for (var l = 1; l < rows.length; l++) {
-//       var row = parseRow(rows[l]);
-//       if (row) contents.push(row);
-//     }
-//     if (contents.length > 0) {
-//       $bubble.html(`<div class="daiiz-bubble-text">${contents.join('<br>')}</div>`);
-//       $bubble.show();
-//     }
-//   });
-// };
-
 var previewPageText = function ($root, $bubble, title, rowHash) {
   var externalProject = false;
   var extraClassName = '';
@@ -370,6 +353,7 @@ var previewPageText = function ($root, $bubble, title, rowHash) {
     contentType: 'application/json',
     url: `https://scrapbox.io/api/pages/${PROJECT_NAME}/${title}`
   }).success(function (data) {
+    EMPTY_LINKS = data.emptyLinks;
     if (externalProject) $bubble.addClass('daiiz-external-project');
     $bubble.attr('data-project', PROJECT_NAME);
     $root.append($bubble);
@@ -416,11 +400,7 @@ var $getRefTextBody = function (title, $root, $bubble, projectName) {
   title = window.encodeURIComponent(title);
   PROJECT_NAME = projectName;
 
-  if (lineHash === null) {
-    previewPageText($root, $bubble, title);
-  }else {
-    previewPageText($root, $bubble, title, lineHash);
-  }
+  previewPageText($root, $bubble, title, lineHash);
 };
 
 var daiizTextBubbleMain = function ($appRoot) {
