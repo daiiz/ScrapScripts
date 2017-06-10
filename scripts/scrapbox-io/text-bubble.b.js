@@ -171,8 +171,11 @@ var makePair = function (words) {
 }
 
 var encodeHref = function (url, startsWithHttp) {
-  if (startsWithHttp) return url;
   var tt = url.match(/scrapbox\.io\/([^\/]+)\/(.+)/);
+  if (startsWithHttp || tt === null) {
+    url = url.replace(/</gi, '%3C').replace(/>/gi, '%3E').replace(/;/gi, '%3B');
+    return url;
+  }
   if (tt !== null) {
     var pageName = tt[2];
     var pageRowNum = pageName.match(/#.{24,32}$/);
@@ -185,7 +188,6 @@ var encodeHref = function (url, startsWithHttp) {
     }
     return url.replace(tt[2], pageName);
   }
-  return url;
 };
 
 // 画像になる可能性があるものに対処
@@ -304,7 +306,17 @@ var parseRow = function (row) {
   res = makePlainLinks(res);
   // ハッシュタグをリンク化する
   res = makeHashTagLinks(res);
-  return res;
+
+  // scriptタグを無効化
+  var html = ''
+  for (var j = 0; j < res.length; j++) {
+    var c = res.charAt(j);
+    if (c === '<' && res.substring(j + 1, res.length).startsWith('script')) html += spans('<');
+    else if (c === '<' && res.substring(j + 1, res.length).startsWith('/script')) html += spans('<');
+    else if (c === ';') html += spans(';');
+    else html += c;
+  }
+  return html;
 };
 
 var makeHashTagLinks = function (row) {
@@ -313,7 +325,7 @@ var makeHashTagLinks = function (row) {
   if (hashTags) {
     for (var i = 0; i < hashTags.length; i++) {
       var hashTag = hashTags[i].trim();
-      var keyword = hashTag.substring(1, hashTag.length);
+      var keyword = window.encodeURIComponent(hashTag.substring(1, hashTag.length));
       var target = (PROJECT_NAME !== detectProject()) ? '_blank' : '_self';
       var a = ` <a href="/${PROJECT_NAME}/${keyword}" class="page-link"
         target="${target}">${spans(hashTag)}</a> `;
@@ -391,6 +403,8 @@ var $getRefTextBody = function (title, $root, $bubble, projectName) {
   }
 
   if (title.startsWith('/')) {
+    console.log('...');
+    return;
     // 外部プロジェクト名とページ名を抽出
     var tt = title.match(/\/([^\/]+)\/(.+)/);
     if (!tt) return;
