@@ -17,9 +17,9 @@ var decorate = function (str, strOpenMark, depth) {
     var body = str.replace(/^\[/, '').replace(/\]$/, '');
     var words = body.split(' ');
     if (words.length >= 2) {
-      var pear = makePear(words);
-      var p0 = pear[0];
-      var p1 = pear[1];
+      var pair = makePair(words);
+      var p0 = pair[0];
+      var p1 = pair[1];
       if (p0.startsWith('http')) {
         // リンク(別名記法)
         body = p1;
@@ -141,26 +141,26 @@ var makePageLink = function (body, tagOpen, tagClose) {
   return {tagOpen: tagOpen, tagClose: tagClose, body: body};
 };
 
-var makePear = function (words) {
+var makePair = function (words) {
   var w0 = words[0];
   var wL = words[words.length - 1];
-  var pear = [];
+  var pair = [];
   if (wL.startsWith('http')) {
-    pear.push(wL);
-    pear.push(words.slice(0, words.length - 1).join(' '));
+    pair.push(wL);
+    pair.push(words.slice(0, words.length - 1).join(' '));
   }else {
-    pear.push(w0);
-    pear.push(words.slice(1, words.length).join(' '));
+    pair.push(w0);
+    pair.push(words.slice(1, words.length).join(' '));
   }
 
-  if (pear[0].startsWith('http') && pear[1].startsWith('http')) {
-    var a = (pear[0].endsWith('.jpg') || pear[0].endsWith('.png') || pear[0].endsWith('.gif'));
-    var b = (pear[0].match(/^https{0,1}:\/\/gyazo.com\/.{24,32}$/) !== null);
+  if (pair[0].startsWith('http') && pair[1].startsWith('http')) {
+    var a = (pair[0].endsWith('.jpg') || pair[0].endsWith('.png') || pair[0].endsWith('.gif'));
+    var b = (pair[0].match(/^https{0,1}:\/\/gyazo.com\/.{24,32}$/) !== null);
     if (a || b) {
-      pear.reverse();
+      pair.reverse();
     }
   }
-  return pear;
+  return pair;
 }
 
 var encodeHref = function (url, startsWithHttp) {
