@@ -40,12 +40,10 @@ var daiizGyazoTextBubbleInit = function ($appRoot, targetSelector, projectName) 
     if ($(`.daiiz-text-bubble[data-pos="${pos}"]`).length > 0) {
       return;
     }
-
     if ($a.attr('rel') && $a.attr('rel') == 'route') {
       $(`.daiiz-text-bubble:not([data-pos="${pos}"])`).remove();
     }
-
-    var tag = $a[0].innerText.replace(/^#/gi, '').replace(/#.{24,32}$/, '');
+    var tag = $a[0].innerText;
 
     timer = window.setTimeout(function () {
       if ($parentBubble.length > 0) projectName = $parentBubble.attr('data-project');

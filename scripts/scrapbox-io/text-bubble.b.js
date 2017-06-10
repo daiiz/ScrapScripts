@@ -164,19 +164,21 @@ var makePear = function (words) {
 }
 
 var encodeHref = function (url, startsWithHttp) {
-  var toks = url.split('/');
-  var pageName = toks.pop();
-  var pageRowNum = pageName.match(/#.{24,32}$/);
-  if (startsWithHttp) {
-    return url;
-  }else if (pageRowNum) {
-    // 行リンク
-    var n = pageRowNum[0];
-    pageName = window.encodeURIComponent(pageName.split(n)[0]) + n;
-  }else {
-    pageName = window.encodeURIComponent(pageName);
+  if (startsWithHttp) return url;
+  var tt = url.match(/scrapbox\.io\/([^\/]+)\/(.+)/);
+  if (tt !== null) {
+    var pageName = tt[2];
+    var pageRowNum = pageName.match(/#.{24,32}$/);
+    if (pageRowNum) {
+      // 行リンク
+      var n = pageRowNum[0];
+      pageName = window.encodeURIComponent(pageName.split(n)[0]) + n;
+    }else {
+      pageName = window.encodeURIComponent(pageName);
+    }
+    return url.replace(tt[2], pageName);
   }
-  return toks.join('/') + (url[0] === '/' || url.startsWith('http') ? '/' : '') + pageName;
+  return url;
 };
 
 // 画像になる可能性があるものに対処
@@ -215,7 +217,6 @@ var parse = function (fullStr, startIdx, depth, seekEnd) {
   var startIdxkeep = startIdx;
   while (startIdx < l) {
     var subStr = fullStr.substring(startIdx, l);
-    //console.info(depth, subStr);
 
     if (subStr.startsWith(DOUBLE_BRACKET_OPEN) && !openInlineCode) {
       var token = parse(fullStr, startIdx + DOUBLE_BRACKET_OPEN.length, depth + 1, DOUBLE_BRACKET_CLOSE);
@@ -263,7 +264,6 @@ var parse = function (fullStr, startIdx, depth, seekEnd) {
     var key = Object.keys(dicts[i])[0];
     html = html.replace(key, dicts[i][key]);
   }
-  //console.info(dicts);
   return html;
 };
 
@@ -337,20 +337,9 @@ var makeShellStr = function (row) {
 /* ================ */
 /*  表示コントール  */
 /* ================ */
-var $getRefTextBody = function (title, $root, $bubble, projectName) {
+var previewFullText = function ($root, $bubble, title) {
   var externalProject = false;
-  if (title.startsWith('/')) {
-    // 外部プロジェクト名とページ名を抽出
-    var tt = title.match(/\/([^\/]+)\/(.+)/);
-    if (!tt) return;
-    var projectName = tt[1];
-    var title = tt[2];
-  }
-  if (projectName !== detectProject()) externalProject = true;
-
-  title = window.encodeURIComponent(title);
-  PROJECT_NAME = projectName;
-
+  if (PROJECT_NAME !== detectProject()) externalProject = true;
   $.ajax({
     type: 'GET',
     url: `https://scrapbox.io/api/pages/${PROJECT_NAME}/${title}/text`
@@ -358,15 +347,74 @@ var $getRefTextBody = function (title, $root, $bubble, projectName) {
     if (externalProject) $bubble.addClass('daiiz-external-project');
     $bubble.attr('data-project', PROJECT_NAME);
     $root.append($bubble);
+
     var rows = data.split('\n');
     var contents = [];
     for (var l = 1; l < rows.length; l++) {
       var row = parseRow(rows[l]);
       if (row) contents.push(row);
     }
-    $bubble.html(`<div class="daiiz-bubble-text">${contents.join('<br>')}</div>`);
-    $bubble.show();
+    if (contents.length > 0) {
+      $bubble.html(`<div class="daiiz-bubble-text">${contents.join('<br>')}</div>`);
+      $bubble.show();
+    }
   });
+};
+
+var previewLineText = function ($root, $bubble, title, rowHash) {
+  var externalProject = false;
+  if (PROJECT_NAME !== detectProject()) externalProject = true;
+  $.ajax({
+    type: 'GET',
+    contentType: 'application/json',
+    url: `https://scrapbox.io/api/pages/${PROJECT_NAME}/${title}`
+  }).success(function (data) {
+    if (externalProject) $bubble.addClass('daiiz-external-project');
+    $bubble.attr('data-project', PROJECT_NAME);
+    $root.append($bubble);
+
+    var lines = data.lines;
+    var contents = [];
+    for (var l = 0; l < lines.length; l++) {
+      var line = lines[l];
+      if (line.id === rowHash) {
+        var row = parseRow(line.text);
+        if (row) contents.push(row);
+        break;
+      }
+    }
+    if (contents.length > 0) {
+      $bubble.html(`<div class="daiiz-bubble-text daiiz-line-permalink">
+        ${contents.join('<br>')}</div>`);
+      $bubble.show();
+    }
+  });
+};
+
+var $getRefTextBody = function (title, $root, $bubble, projectName) {
+  title = title.replace(/^\#/, '');
+  var t = title.match(/\#.{24,32}$/);
+  var lineHash = null;
+  if (t !== null) {
+    title = title.replace(/\#.{24,32}$/, '');
+    lineHash = t[0].replace('#', '');
+  }
+
+  if (title.startsWith('/')) {
+    // 外部プロジェクト名とページ名を抽出
+    var tt = title.match(/\/([^\/]+)\/(.+)/);
+    if (!tt) return;
+    var projectName = tt[1];
+    var title = tt[2];
+  }
+  title = window.encodeURIComponent(title);
+  PROJECT_NAME = projectName;
+
+  if (lineHash === null) {
+    previewFullText($root, $bubble, title);
+  }else {
+    previewLineText($root, $bubble, title, lineHash);
+  }
 };
 
 var daiizTextBubbleMain = function ($appRoot) {
@@ -391,20 +439,17 @@ var daiizTextBubbleMain = function ($appRoot) {
     $bubble.attr('data-pos', pos);
 
     // すでに表示されているならば，何もしない
-    if ($(`.daiiz-text-bubble[data-pos="${pos}"]`).length > 0) {
-      return;
-    }
+    if ($(`.daiiz-text-bubble[data-pos="${pos}"]`).length > 0) return;
 
     if ($a.attr('rel') && $a.attr('rel') == 'route') {
       $(`.daiiz-text-bubble:not([data-pos="${pos}"])`).remove();
     }
-
-    var tag = $a[0].innerText.replace(/^#/gi, '').replace(/#.{24,32}$/, '');
+    var keyword = $a[0].innerText;
 
     timer = window.setTimeout(function () {
       var projectName = detectProject();
       if ($parentBubble.length > 0) projectName = $parentBubble.attr('data-project');
-      $getRefTextBody(tag.trim(), $root, $bubble, projectName);
+      $getRefTextBody(keyword.trim(), $root, $bubble, projectName);
     }, 650);
   });
 
