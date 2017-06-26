@@ -1,4 +1,5 @@
 // shared
+var ESC_KEY_CODE = 27;
 var DAIIZ_GYAZO_TEXT_BUBBLE = 'daiiz-gyazo-text-bubble';
 
 var installed = function (functionName) {
@@ -41,6 +42,10 @@ $(function () {
   });
   mo.observe($('body')[0], {
     attributes: true
+  });
+
+  $('body').on('keydown', function (e) {
+    if (e.keyCode === ESC_KEY_CODE) $('.daiiz-card-root').remove();
   });
 
   daiizRelCardsMain($appRoot);

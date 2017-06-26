@@ -63,7 +63,7 @@ var daiizRelCardsMain = function ($appRoot) {
 var $getRelCardBubble = function ($appRoot) {
   var $relCardsBubble = $('#daiiz-rel-cards-bubble');
   if ($relCardsBubble.length === 0) {
-    $relCardsBubble = $('<div id="daiiz-rel-cards-bubble" class="related-page-list"></div>');
+    $relCardsBubble = $('<div id="daiiz-rel-cards-bubble" class="related-page-list daiiz-card-root"></div>');
     $appRoot.find('.page').append($relCardsBubble);
   }
   return $relCardsBubble;

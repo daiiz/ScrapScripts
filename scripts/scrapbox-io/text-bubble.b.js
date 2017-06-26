@@ -477,7 +477,7 @@ var daiizTextBubbleMain = function ($appRoot) {
 };
 
 var $getTextBubble = function () {
-  var $textBubble = $('<div class="daiiz-text-bubble related-page-list daiiz-card"></div>');
+  var $textBubble = $('<div class="daiiz-text-bubble related-page-list daiiz-card daiiz-card-root"></div>');
   return $textBubble;
 };
 /* ================ */
