@@ -6,7 +6,8 @@ var installed = function (functionName) {
   var d = `data-${functionName}`;
   var defaulfPosition = {
     'daiiz-text-bubble': 's', // South
-    'daiiz-rel-bubble' : 'n'  // North
+    'daiiz-rel-bubble' : 'n', // North
+    'daiiz-icon-button': true
   };
   if ($('body').attr(d)) {
     var d = $('body').attr(d);
