@@ -4,7 +4,7 @@ var DAIIZ_GYAZO_TEXT_BUBBLE = 'daiiz-gyazo-text-bubble';
 
 var installed = function (functionName) {
   var d = `data-${functionName}`;
-  var defaulfPosition = {
+  var defaulfValue = {
     'daiiz-text-bubble': 's', // South
     'daiiz-rel-bubble' : 'n', // North
     'daiiz-icon-button': true
@@ -13,7 +13,7 @@ var installed = function (functionName) {
     var d = $('body').attr(d);
     if (d === 'off') return false;
     if (d === 'on') {
-      return defaulfPosition[functionName];
+      return defaulfValue[functionName];
     }else if (d === 'n' || d === 's'){
       return d;
     }
