@@ -420,7 +420,8 @@ var $getRefTextBody = function (title, $root, $bubble, projectName) {
 var daiizTextBubbleMain = function ($appRoot) {
   var timer = null;
   $appRoot.on('mouseenter', 'a.page-link', function (e) {
-    if (!installed('daiiz-text-bubble')) return;
+    var pos = installed('daiiz-text-bubble');
+    if (pos === false) return;
 
     var $a = $(e.target).closest('a.page-link');
     var $parentBubble = $(e.target).closest('div.daiiz-text-bubble');

@@ -3,21 +3,27 @@ var daiizRelCardsMain = function ($appRoot) {
   var timer = null;
   $appRoot.on('mouseenter', 'a.page-link', function (e) {
     var $relationLabels = $('li.relation-label');
-    if (!installed('daiiz-rel-bubble')) return;
+    var pos = installed('daiiz-rel-bubble');
+    if (pos === false) return;
     if ($relationLabels.length === 0) return;
 
     var relLabelHeight = +($relationLabels.css('height').split('px')[0]);
-    var pad = 10;  // main.cssでの設定値
     var $a = $(e.target).closest('a.page-link');
     if ($a.hasClass('empty-page-link')) return;
     if (!$a.attr('rel') && $a.attr('rel') !== 'route') return;
     var $bubble = $getRelCardBubble($appRoot);
     var rect = $a[0].getBoundingClientRect();
+
+    var pad = 10;  // main.cssでの設定値
+    var top = rect.top + window.pageYOffset - relLabelHeight - (pad * 2) - 29;  // 'n'
+    if (pos === 's') {
+      top = rect.top + window.pageYOffset + $a[0].offsetHeight - 22;
+    }
+
     $bubble.css({
       'max-width': $('.editor-wrapper')[0].offsetWidth - $a[0].offsetLeft,
       'left': rect.left + window.pageXOffset,
-      // .related-page-listのmargin-top=24pxぶん引く
-      'top': rect.top + window.pageYOffset - relLabelHeight - (pad * 2) - 24 - 5,
+      'top': top,
       'background-color': $('body').css('background-color')
     });
     var tag = $a[0].innerText.replace(/^#/gi, '').split('#')[0];

@@ -4,7 +4,19 @@ var DAIIZ_GYAZO_TEXT_BUBBLE = 'daiiz-gyazo-text-bubble';
 
 var installed = function (functionName) {
   var d = `data-${functionName}`;
-  if ($('body').attr(d) && $('body').attr(d) === 'on') return true;
+  var defaulfPosition = {
+    'daiiz-text-bubble': 's', // South
+    'daiiz-rel-bubble' : 'n'  // North
+  };
+  if ($('body').attr(d)) {
+    var d = $('body').attr(d);
+    if (d === 'off') return false;
+    if (d === 'on') {
+      return defaulfPosition[functionName];
+    }else if (d === 'n' || d === 's'){
+      return d;
+    }
+  }
   return false;
 };
 
@@ -20,7 +32,6 @@ var enableDaiizScript = function (pairs) {
     func_project_pairs: pairs
   });
 };
-
 
 $(function () {
   var $appRoot = $('#app-container');
