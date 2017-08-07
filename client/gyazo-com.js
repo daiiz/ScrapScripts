@@ -1,4 +1,6 @@
 $(function () {
   window.daiizGyazo.manage.install()
-  window.daiizGyazo.textBubble.enable()
+    .then(projectName => {
+      window.daiizGyazo.textBubble.enable(projectName)
+    })
 })
