@@ -11,7 +11,7 @@ exports.installed = function (functionName) {
     'daiiz-icon-button': true
   }
   if ($('body').attr(d)) {
-    var d = $('body').attr(d)
+    d = $('body').attr(d)
     if (d === 'off') return false
     if (d === 'on') {
       return defaulfValue[functionName]
@@ -23,7 +23,7 @@ exports.installed = function (functionName) {
 }
 
 exports.detectProject = function () {
-  var r = window.location.href.match(/scrapbox.io\/([^\/.]*)/)
+  var r = window.location.href.match(/scrapbox.io\/([^/.]*)/)
   if (r && r.length >= 2) return window.encodeURIComponent(r[1])
   return 'daiiz'
 }
@@ -36,9 +36,7 @@ var enableDaiizScript = function (pairs) {
 }
 
 exports.install = () => {
-  var $appRoot = $('#app-container')
-
-  var mo = new MutationObserver(function (mutationRecords) {
+  var mo = new window.MutationObserver(function (mutationRecords) {
     var pairs = {}
     for (var i = 0; i < mutationRecords.length; i++) {
       var record = mutationRecords[i]
@@ -60,7 +58,4 @@ exports.install = () => {
   $('body').on('keydown', function (e) {
     if (e.keyCode === ESC_KEY_CODE) $('.daiiz-card-root').remove()
   })
-
-  // daiizRelCardsMain($appRoot);
-  // daiizTextBubbleMain($appRoot);
 }

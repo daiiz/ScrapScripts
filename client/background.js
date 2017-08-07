@@ -1,4 +1,5 @@
 // background
+
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   var cmd = request.command;
 
