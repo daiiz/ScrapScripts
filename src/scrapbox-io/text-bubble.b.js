@@ -3,7 +3,6 @@ const daiizScrapboxManage = require('./manage')
 const installed = daiizScrapboxManage.installed
 const detectProject = daiizScrapboxManage.detectProject
 
-console.info("text-bubble.b.js");
 var BRACKET_OPEN = '[';
 var DOUBLE_BRACKET_OPEN = '[[';
 var BRACKET_CLOSE = ']';
@@ -340,7 +339,7 @@ var makeHashTagLinks = function (row) {
   return row.substring(1, row.length - 1);
 }
 
-makePlainLinks = function (row) {
+var makePlainLinks = function (row) {
   row = ' ' + row + ' ';
   var words = row.split(' ');
   var res = [];
@@ -369,7 +368,7 @@ var previewPageText = function ($root, $bubble, title, rowHash) {
     type: 'GET',
     contentType: 'application/json',
     url: `https://scrapbox.io/api/pages/${PROJECT_NAME}/${title}`
-  }).success(function (data) {
+  }).done(data => {
     EMPTY_LINKS = data.emptyLinks;
     if (externalProject) $bubble.addClass('daiiz-external-project');
     $bubble.attr('data-project', PROJECT_NAME);
@@ -422,7 +421,8 @@ var $getRefTextBody = function (title, $root, $bubble, projectName) {
   previewPageText($root, $bubble, title, lineHash);
 };
 
-exports.enable = function ($appRoot) {
+exports.enable = function () {
+  var $appRoot = $('#app-container');
   var timer = null;
   $appRoot.on('mouseenter', 'a.page-link', function (e) {
     var pos = installed('daiiz-text-bubble');
@@ -430,7 +430,7 @@ exports.enable = function ($appRoot) {
 
     var $a = $(e.target).closest('a.page-link');
     var $parentBubble = $(e.target).closest('div.daiiz-text-bubble');
-    $root = $appRoot.find('.page');
+    var $root = $appRoot.find('.page');
 
     if ($a.hasClass('empty-page-link')) return;
     var $bubble = $getTextBubble();

@@ -24,7 +24,7 @@ exports.enable = () => {
       $.ajax({
         type: 'GET',
         url: scriptFilePath
-      }).success(function (data) {
+      }).done(data => {
         // 即時実行される
       });
       return false;

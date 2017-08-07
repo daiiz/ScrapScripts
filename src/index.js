@@ -1,3 +1,5 @@
+window.$ = require('jquery')
+
 window.daiizGyazo = {
   manage    : require('./gyazo-com/manage'),
   textBubble: require('./gyazo-com/text-bubble')

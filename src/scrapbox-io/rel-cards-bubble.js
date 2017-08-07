@@ -2,7 +2,8 @@ const daiizScrapboxManage = require('./manage')
 const installed = daiizScrapboxManage.installed
 const detectProject = daiizScrapboxManage.detectProject
 
-exports.enable = function ($appRoot) {
+exports.enable = function () {
+  var $appRoot = $('#app-container');
   /* 関連カード */
   var timer = null;
   $appRoot.on('mouseenter', 'a.page-link', function (e) {
@@ -35,7 +36,7 @@ exports.enable = function ($appRoot) {
       $bubble.hide();
       return;
     }
-    $cards = $getRelCards(tag);
+    var $cards = $getRelCards(tag);
     if ($cards.children().length === 0) {
       $bubble.hide();
       return;
