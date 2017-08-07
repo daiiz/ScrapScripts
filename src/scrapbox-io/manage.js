@@ -1,8 +1,9 @@
-// shared
+// Scrapbox
+var $ = require('jquery')
 var ESC_KEY_CODE = 27;
 var DAIIZ_GYAZO_TEXT_BUBBLE = 'daiiz-gyazo-text-bubble';
 
-var installed = function (functionName) {
+exports.installed = function (functionName) {
   var d = `data-${functionName}`;
   var defaulfValue = {
     'daiiz-text-bubble': 's', // South
@@ -21,7 +22,7 @@ var installed = function (functionName) {
   return false;
 };
 
-var detectProject = function () {
+exports.detectProject = function () {
   var r = window.location.href.match(/scrapbox.io\/([^\/.]*)/);
   if (r && r.length >= 2) return window.encodeURIComponent(r[1]);
   return 'daiiz';
@@ -34,7 +35,7 @@ var enableDaiizScript = function (pairs) {
   });
 };
 
-$(function () {
+exports.install = () => {
   var $appRoot = $('#app-container');
 
   var mo = new MutationObserver(function (mutationRecords) {
@@ -60,6 +61,6 @@ $(function () {
     if (e.keyCode === ESC_KEY_CODE) $('.daiiz-card-root').remove();
   });
 
-  daiizRelCardsMain($appRoot);
-  daiizTextBubbleMain($appRoot);
-});
+  //daiizRelCardsMain($appRoot);
+  //daiizTextBubbleMain($appRoot);
+};

@@ -1,5 +1,9 @@
+const $ = require('jquery')
+const daiizScrapboxManage = require('./manage')
+const installed = daiizScrapboxManage.installed
+const detectProject = daiizScrapboxManage.detectProject
 
-$(function () {
+exports.enable = () => {
   var $appRoot = $('#app-container');
 
   $appRoot.on('click', 'img.icon', function (e) {
@@ -26,4 +30,4 @@ $(function () {
       return false;
     }
   });
-});
+}

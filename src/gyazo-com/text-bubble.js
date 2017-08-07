@@ -1,4 +1,6 @@
 // Gyazo
+var $ = require('jquery')
+var daiizGyazoManage = require('./manage')
 
 var daiizGyazoDescLink = function ($appRoot, projectName) {
   // Gyazoの写真の説明文の [] をリンク化する
@@ -74,7 +76,7 @@ var daiizGyazoTextBubbleInit = function ($appRoot, targetSelector, projectName) 
   });
 };
 
-var daiizGyazoTextBubbleMain = function ($appRoot, projectName) {
+exports.daiizGyazoTextBubbleMain = ($appRoot, projectName) => {
   daiizGyazoTextBubbleInit($appRoot, 'a.hashtag', projectName);
   daiizGyazoTextBubbleInit($appRoot, 'a.page-link', projectName);
   daiizGyazoDescLink($appRoot, projectName);

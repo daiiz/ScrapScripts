@@ -1,3 +1,5 @@
+// Gyazo
+var $ = require('jquery')
 var ROOT_PROJECT_NAME = null;
 var DAIIZ_GYAZO_TEXT_BUBBLE = 'daiiz-gyazo-text-bubble';
 
@@ -5,7 +7,7 @@ var detectProject = function () {
   return ROOT_PROJECT_NAME;
 };
 
-$(function () {
+exports.install = () => {
   var $appRoot = $('body');
 
   chrome.runtime.sendMessage({
@@ -18,4 +20,4 @@ $(function () {
       daiizGyazoTextBubbleMain($appRoot, ROOT_PROJECT_NAME);
     }
   });
-});
+}

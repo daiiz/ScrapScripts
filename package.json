@@ -11,7 +11,8 @@
     "build:browserify": "browserify -t [ babelify ] src/index.js -o chrome/build/bundle.js -v",
     "watch": "run-p watch:**",
     "watch:babel": "npm run build:babel -- --watch",
-    "watch:browserify": "watchify -t [ babelify ] src/index.js -o chrome/build/bundle.js -v"
+    "watch:browserify": "watchify -t [ babelify ] src/index.js -o chrome/build/bundle.js -v",
+    "chrome:zip": "echo 'foo'"
   },
   "dependencies": {
     "babel-cli": "^6.24.1",

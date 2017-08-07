@@ -1,3 +1,8 @@
+const $ = require('jquery')
+const daiizScrapboxManage = require('./manage')
+const installed = daiizScrapboxManage.installed
+const detectProject = daiizScrapboxManage.detectProject
+
 console.info("text-bubble.b.js");
 var BRACKET_OPEN = '[';
 var DOUBLE_BRACKET_OPEN = '[[';
@@ -417,7 +422,7 @@ var $getRefTextBody = function (title, $root, $bubble, projectName) {
   previewPageText($root, $bubble, title, lineHash);
 };
 
-var daiizTextBubbleMain = function ($appRoot) {
+exports.enable = function ($appRoot) {
   var timer = null;
   $appRoot.on('mouseenter', 'a.page-link', function (e) {
     var pos = installed('daiiz-text-bubble');

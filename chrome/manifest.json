@@ -24,7 +24,7 @@
     {
       "matches": ["*://scrapbox.io/*"],
       "css": [
-        "content_script_css/scrapbox-io/main.css"
+        "content_scripts_css/scrapbox-io/main.css"
       ],
       "js": [
           "build/scrapbox-io.js"
@@ -34,7 +34,7 @@
     {
       "matches": ["*://gyazo.com/*"],
       "css": [
-        "content_script_css/scrapbox-io/main.css"
+        "content_scripts_css/scrapbox-io/main.css"
       ],
       "js": [
         "build/gyazo-com.js"

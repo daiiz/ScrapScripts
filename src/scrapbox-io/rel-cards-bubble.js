@@ -1,4 +1,8 @@
-var daiizRelCardsMain = function ($appRoot) {
+const daiizScrapboxManage = require('./manage')
+const installed = daiizScrapboxManage.installed
+const detectProject = daiizScrapboxManage.detectProject
+
+exports.enable = function ($appRoot) {
   /* 関連カード */
   var timer = null;
   $appRoot.on('mouseenter', 'a.page-link', function (e) {
