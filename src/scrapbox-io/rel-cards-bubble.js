@@ -12,7 +12,7 @@ exports.enable = function () {
     if (pos === false) return
     if ($relationLabels.length === 0) return
 
-    var relLabelHeight = +($relationLabels.css('height').split('px')[0])
+    var relLabelHeight = 110 // +($relationLabels.css('height').split('px')[0])
     var $a = $(e.target).closest('a.page-link')
     if ($a.hasClass('empty-page-link')) return
     if (!$a.attr('rel') && $a.attr('rel') !== 'route') return
@@ -100,13 +100,22 @@ var $getRelCards = function (title) {
     var $label = $(relationLabels[i])
     var label = $label.find('.title')[0].innerText
     if (label === title) {
+      // TODO: 書き直したい
       var $li = $label.next('li.page-list-item')
       var $clonedLi = $li.clone(true)
       $cards.append($fillUpIcon($clonedLi))
+      $clonedLi.css({
+        width: 110,
+        height: 110
+      })
       var c = 0
       while ($li.length === 1 && c < 200) {
         $li = $li.next('li.page-list-item')
         var $clonedLi = $li.clone(true)
+        $clonedLi.css({
+          width: 110,
+          height: 110
+        })
         $cards.append($fillUpIcon($clonedLi))
         c++
       }
