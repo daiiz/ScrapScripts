@@ -12,7 +12,7 @@
     "watch": "run-p watch:**",
     "watch:babel": "npm run build:babel -- --watch",
     "watch:browserify": "watchify -t [ babelify ] src/index.js -o chrome/build/bundle.js -v",
-    "chrome:zip": "echo 'foo'",
+    "chrome:zip": "zip -r ScrapScript.zip chrome/",
     "test": "run-s test:**",
     "test:standard": "standard --fix src/*.js src/**/*.js"
   },
