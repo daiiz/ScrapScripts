@@ -20,7 +20,6 @@ exports.enable = () => {
     if (iconName) {
       var buttonName = iconName[0]
       var scriptFilePath = `https://scrapbox.io/api/code/${projectName}/${buttonName}/button.js`
-      console.log(scriptFilePath)
       $.ajax({
         type: 'GET',
         url: scriptFilePath

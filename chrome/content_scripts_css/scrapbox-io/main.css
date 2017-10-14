@@ -24,6 +24,7 @@
 #daiiz-rel-cards-bubble .page-list-item {
   display: inline-block;
   white-space: normal;
+  margin: 0 10px 10px 0;
 }
 
 .daiiz-text-bubble {
