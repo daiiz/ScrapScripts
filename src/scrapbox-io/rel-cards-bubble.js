@@ -12,7 +12,7 @@ exports.enable = function () {
     if (pos === false) return
     if ($relationLabels.length === 0) return
 
-    var relLabelHeight = 110 // +($relationLabels.css('height').split('px')[0])
+    var relLabelHeight = 120 // +($relationLabels.css('height').split('px')[0])
     var $a = $(e.target).closest('a.page-link')
     if ($a.hasClass('empty-page-link')) return
     if (!$a.attr('rel') && $a.attr('rel') !== 'route') return
@@ -105,16 +105,16 @@ var $getRelCards = function (title) {
       var $clonedLi = $li.clone(true)
       $cards.append($fillUpIcon($clonedLi))
       $clonedLi.css({
-        width: 110,
-        height: 110
+        width: 120,
+        height: 120
       })
       var c = 0
       while ($li.length === 1 && c < 200) {
         $li = $li.next('li.page-list-item')
         var $clonedLi = $li.clone(true)
         $clonedLi.css({
-          width: 110,
-          height: 110
+          width: 120,
+          height: 120
         })
         $cards.append($fillUpIcon($clonedLi))
         c++
