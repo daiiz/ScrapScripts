@@ -1,11 +1,11 @@
 // background
+
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   var cmd = request.command;
 
   // 外部サイトで発動する機能を有効にする
   if (cmd === 'enable-daiiz-script') {
     var funcProjectPairs = request.func_project_pairs;
-    //console.dir(funcProjectPairs);
 
     var funcNames = Object.keys(funcProjectPairs);
     for (var i = 0; i < funcNames.length; i++) {
