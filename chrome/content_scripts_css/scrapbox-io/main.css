@@ -81,3 +81,92 @@
   border-width: 1px;
   border-color: #7ba1f8;
 }
+
+#m {
+  margin: 0;
+  border: 0;
+  width: 100%;
+  top: 0px;
+  border: 0;
+  z-index: -1;
+}
+
+#mm {
+  top: 50%;
+  border: 0;
+  z-index: -1;
+}
+
+.nm {
+  border-bottom: 2px solid #9b9b9b;
+}
+.sm {
+  border-top: 2px solid #9b9b9b;
+}
+
+.wm {
+  border-right: 1px solid #9b9b9b;
+}
+.em {
+  border-left: 1px solid #9b9b9b;
+}
+
+.m {
+  position: fixed;
+  width: 100%;
+  height: 50%;
+  box-sizing: border-box;
+}
+
+.pretty-split-pane-frame {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+}
+
+.pretty-split-pane-frame .split-pane > .split-pane-divider.dragged.touch {
+  background: blue;
+  opacity: 0.25;
+}
+
+.pretty-split-pane-component-inner {
+  box-sizing: border-box;
+  background: white;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+}
+
+#left-component {
+  width: 20em;
+}
+
+#my-divider {
+  left: 20em;
+  width: 5px;
+  z-index: 10000 !important;
+}
+
+#right-component {
+  left: 20em;
+  margin-left: 5px;
+}
+
+#bar {
+  -webkit-app-region: drag;
+  cursor: move;
+  position: fixed;
+  width: 100%;
+  height: 16px;
+  z-index: 100000;
+}
+
+#pane-dummy {
+  display: none;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  z-index: 1000;
+}

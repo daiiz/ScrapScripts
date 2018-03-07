@@ -24,7 +24,8 @@
     {
       "matches": ["*://scrapbox.io/*"],
       "css": [
-        "content_scripts_css/scrapbox-io/main.css"
+        "content_scripts_css/scrapbox-io/main.css",
+        "content_scripts_css/split-pane/split-pane.css"
       ],
       "js": [
           "build/scrapbox-io.js"
