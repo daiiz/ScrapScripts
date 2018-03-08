@@ -35,4 +35,41 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     sendResponse(projectNames);
     return;
   }
-});
+
+  // Clipboardに保持されたURLのページタイトルを取得する
+  if (cmd === 'get-clipboard-page') {
+    const bg = chrome.extension.getBackgroundPage()
+    const input = document.querySelector('#ctrlv')
+    input.value = ''
+    input.focus()
+    bg.document.execCommand('paste')
+    let text = input.value
+
+    if (text.match(/^https:\/\/scrapbox\.io\//)) sendResponse(text)
+    if (text.match(/^https?:\/\//)) {
+      fetchPage(text)
+      return
+    }
+    sendResponse(text)
+  }
+})
+
+const fetchPage = async (url) => {
+  const res = await fetch(url)
+  const body = await res.text()
+  const parser = new DOMParser()
+  const doc = parser.parseFromString(body, 'text/html')
+  console.log(doc.title)
+
+  let externalLink = url
+  const title = doc.title || null
+  if (title) externalLink = `[${url} ${title}]`
+
+  console.log(externalLink)
+  chrome.tabs.getSelected(null, tab => {
+    chrome.tabs.sendMessage(tab.id, {
+      command: 're:get-clipboard-page',
+      externalLink
+    })
+  })
+}
