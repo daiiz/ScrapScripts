@@ -55,7 +55,9 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 })
 
 const fetchPage = async (url) => {
-  const res = await fetch(url)
+  const res = await fetch(url, {
+    credentials: 'include'
+  })
   const body = await res.text()
   const parser = new DOMParser()
   const doc = parser.parseFromString(body, 'text/html')
