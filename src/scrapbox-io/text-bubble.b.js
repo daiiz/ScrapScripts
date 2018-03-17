@@ -15,7 +15,7 @@ var PROJECT_NAME = null
 var EMPTY_LINKS = []
 
 exports.$getTextBubble = function () {
-  var $textBubble = $(`<div class="daiiz-text-bubble related-page-list 
+  var $textBubble = $(`<div class="daiiz-text-bubble related-page-list
     daiiz-card daiiz-card-root"></div>`)
   return $textBubble
 }
@@ -372,7 +372,7 @@ var previewPageText = function ($root, $bubble, title, rowHash) {
     contentType: 'application/json',
     url: `https://scrapbox.io/api/pages/${PROJECT_NAME}/${title}`
   }).done(data => {
-    EMPTY_LINKS = data.emptyLinks
+    EMPTY_LINKS = data.emptyLinks || []
     if (externalProject) $bubble.addClass('daiiz-external-project')
     $bubble.attr('data-project', PROJECT_NAME)
     $root.append($bubble)
@@ -440,9 +440,9 @@ exports.enable = function () {
     var $bubble = self.$getTextBubble()
     var rect = $a[0].getBoundingClientRect()
     $bubble.css({
-      'max-width': $('.editor-wrapper')[0].offsetWidth - $a[0].offsetLeft,
+      'max-width': $('.editor')[0].offsetWidth - $a[0].offsetLeft,
       'left': rect.left + window.pageXOffset,
-      'top': rect.top + window.pageYOffset + $a[0].offsetHeight + 3 - 24,
+      'top': 18 + rect.top + window.pageYOffset + $a[0].offsetHeight + 3 - 24,
       'border-color': $('body').css('background-color')
     })
     var pos = `${$bubble.css('top')}_${$bubble.css('left')}`
