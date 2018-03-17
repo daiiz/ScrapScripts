@@ -26,9 +26,9 @@ exports.enable = function () {
     }
 
     $bubble.css({
-      'max-width': $('.editor-wrapper')[0].offsetWidth - $a[0].offsetLeft,
+      'max-width': $('.editor')[0].offsetWidth - $a[0].offsetLeft,
       'left': rect.left + window.pageXOffset,
-      'top': top,
+      'top': 18 + top,
       'background-color': $('body').css('background-color')
     })
     var tag = $a[0].innerText.replace(/^#/gi, '').split('#')[0]
