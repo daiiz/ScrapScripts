@@ -20,8 +20,9 @@ Chrome Extension for [Scrapbox](https://scrapbox.io).
 - Bubbles
   - Show related 2-hop-link cards
   - Preview for link destination page
-- IconButton 
+- IconButton
 - Integration with Gyazo
+- Pasting URLs in the pageLink notation `[URL title]` (beta)
 
 ## Settings
 - https://scrapbox.io/customize/daiiz製のChrome拡張機能
