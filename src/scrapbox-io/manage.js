@@ -3,19 +3,23 @@ var $ = require('jquery')
 var ESC_KEY_CODE = 27
 var DAIIZ_GYAZO_TEXT_BUBBLE = 'daiiz-gyazo-text-bubble'
 
+// XXX: 直したい
 exports.installed = function (functionName) {
   var d = `data-${functionName}`
   var defaulfValue = {
     'daiiz-text-bubble': 's', // South
     'daiiz-rel-bubble': 'n', // North
-    'daiiz-icon-button': true
+    'daiiz-icon-button': true,
+    'daiiz-paste-url-title': 'ctrl'
   }
   if ($('body').attr(d)) {
     d = $('body').attr(d)
     if (d === 'off') return false
     if (d === 'on') {
       return defaulfValue[functionName]
-    } else if (d === 'n' || d === 's') {
+    } else if (d.length >= 1) {
+      // n, s
+      // ctrl
       return d
     }
   }
