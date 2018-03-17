@@ -5,6 +5,7 @@ const detectProject = daiizScrapboxManage.detectProject
 
 const keys = {
   ctrl: 17,
+  alt: 18,
   v: 86
 }
 
