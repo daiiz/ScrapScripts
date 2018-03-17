@@ -17,7 +17,6 @@ exports.enable = () => {
     const key = installed('daiiz-paste-url-title')
     if (!key) return
     const { keyCode } = event
-    console.log(keyCode)
     if (keyCode === keys[key]) c = 1
   })
 
