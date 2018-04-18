@@ -45,10 +45,11 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     bg.document.execCommand('paste')
     let text = textarea.value
 
-    if (text.match(/^https?:\/\/scrapbox\.io\//)) sendResponse(text)
-    if (text.match(/gyazo\.com\//)) sendResponse(text)
-    if (text.match(/www\.youtube\.com\//)) sendResponse(text)
-    if (text.match(/www\.google/) && text.match(/\/maps\//)) sendResponse(text)
+    if (text.match(/\n/)) return sendResponse(text)
+    if (text.match(/^https?:\/\/scrapbox\.io\//)) return sendResponse(text)
+    if (text.match(/gyazo\.com\//)) return sendResponse(text)
+    if (text.match(/www\.youtube\.com\//)) return sendResponse(text)
+    if (text.match(/www\.google/) && text.match(/\/maps\//)) return sendResponse(text)
     if (text.match(/^https?:\/\//)) {
       fetchPage(text)
       return
