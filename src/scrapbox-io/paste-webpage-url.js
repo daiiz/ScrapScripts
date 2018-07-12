@@ -1,7 +1,7 @@
 const $ = require('jquery')
 const daiizScrapboxManage = require('./manage')
-const installed = daiizScrapboxManage.installed
-const detectProject = daiizScrapboxManage.detectProject
+const {installed, detectProject} = daiizScrapboxManage
+const app = window.browser || window.chrome
 
 const keys = {
   ctrl: 17,
@@ -29,7 +29,7 @@ exports.enable = () => {
     event.preventDefault()
     event.stopPropagation()
 
-    chrome.runtime.sendMessage({
+    app.runtime.sendMessage({
       command: 'get-clipboard-page'
     }, text => {
       if (!text) return
@@ -41,7 +41,7 @@ exports.enable = () => {
     c = 0
   })
 
-  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  app.runtime.onMessage.addListener((request, sender, sendResponse) => {
     const { command } = request
     if (command === 're:get-clipboard-page') {
       const { externalLink } = request

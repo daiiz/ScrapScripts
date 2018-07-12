@@ -1,6 +1,7 @@
 // background
+const app = window.browser || window.chrome
 
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+app.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   var cmd = request.command;
 
   // 外部サイトで発動する機能を有効にする
@@ -38,7 +39,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
   // Clipboardに保持されたURLのページタイトルを取得する
   if (cmd === 'get-clipboard-page') {
-    const bg = chrome.extension.getBackgroundPage()
+    const bg = app.extension.getBackgroundPage()
     const textarea = document.querySelector('#ctrlv')
     textarea.value = ''
     textarea.focus()
@@ -72,8 +73,8 @@ const fetchPage = async (url) => {
   if (title) externalLink = `[${url} ${title}]`
 
   console.log(externalLink)
-  chrome.tabs.getSelected(null, tab => {
-    chrome.tabs.sendMessage(tab.id, {
+  app.tabs.getSelected(null, tab => {
+    app.tabs.sendMessage(tab.id, {
       command: 're:get-clipboard-page',
       externalLink
     })

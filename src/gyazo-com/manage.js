@@ -1,6 +1,7 @@
 // Gyazo
-var ROOT_PROJECT_NAME = null
-var DAIIZ_GYAZO_TEXT_BUBBLE = 'daiiz-gyazo-text-bubble'
+let ROOT_PROJECT_NAME = null
+const DAIIZ_GYAZO_TEXT_BUBBLE = 'daiiz-gyazo-text-bubble'
+const app = window.browser || window.chrome
 
 exports.detectProject = function () {
   return ROOT_PROJECT_NAME
@@ -8,7 +9,7 @@ exports.detectProject = function () {
 
 exports.install = () => {
   return new Promise(resolve => {
-    chrome.runtime.sendMessage({
+    app.runtime.sendMessage({
       command: 'get-project-name',
       func_names: ['daiiz-gyazo-text-bubble']
     }, function (projectNames) {
