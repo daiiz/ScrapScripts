@@ -2,7 +2,6 @@
 const $ = require('jquery')
 const ESC_KEY_CODE = 27
 const DAIIZ_GYAZO_TEXT_BUBBLE = 'daiiz-gyazo-text-bubble'
-const app = window.browser || window.chrome
 
 // XXX: 直したい
 exports.installed = function (functionName) {
@@ -29,12 +28,12 @@ exports.installed = function (functionName) {
 
 exports.detectProject = function () {
   var r = window.location.href.match(/scrapbox.io\/([^/.]*)/)
-  if (r && r.length >= 2) return window.encodeURIComponent(r[1])
+  if (r && r.length >= 2) return encodeURIComponent(r[1])
   return 'daiiz'
 }
 
 var enableDaiizScript = function (pairs) {
-  app.runtime.sendMessage({
+  window.app.runtime.sendMessage({
     command: 'enable-daiiz-script',
     func_project_pairs: pairs
   })
