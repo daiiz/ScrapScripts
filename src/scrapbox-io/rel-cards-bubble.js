@@ -41,7 +41,6 @@ exports.enable = function () {
       $bubble.hide()
       return
     }
-
     $bubble.find('.daiiz-cards').remove()
     $bubble.append($cards)
     $bubble.css({
@@ -81,11 +80,11 @@ var $getRelCardBubble = function ($appRoot) {
 }
 
 /* 関連カード */
-var $getRelCards = function (title) {
-  var project = window.encodeURIComponent(window.location.href.match(/scrapbox.io\/([^\/.]*)/)[1])
+const $getRelCards = function (title) {
+  var project = encodeURIComponent(window.location.href.match(/scrapbox.io\/([^\/.]*)/)[1])
   var $fillUpIcon = function ($clonedLi) {
     if ($clonedLi.find('img.lazy-load-img').length === 0) {
-      var cardTitle = window.encodeURIComponent($clonedLi.find('div.title').text())
+      var cardTitle = encodeURIComponent($clonedLi.find('div.title').text())
       $clonedLi.find('div.icon').append(
         `<img src="https://scrapbox.io/api/pages/${project}/${cardTitle}/icon"
         class="lazy-load-img">`)
