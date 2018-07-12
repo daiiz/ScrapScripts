@@ -6,8 +6,9 @@ const detectProject = daiizScrapboxManage.detectProject
 exports.enable = () => {
   var $appRoot = $('#app-container')
 
-  $appRoot.on('click', 'img.icon', function (e) {
+  $appRoot.on('click', 'img.icon', async function (e) {
     if (!installed('daiiz-icon-button')) return
+    e.preventDefault()
     var projectName = detectProject()
 
     var $t = $(e.target).closest('img.icon')
@@ -20,12 +21,10 @@ exports.enable = () => {
     if (iconName) {
       var buttonName = iconName[0]
       var scriptFilePath = `https://scrapbox.io/api/code/${projectName}/${buttonName}/button.js`
-      $.ajax({
-        type: 'GET',
-        url: scriptFilePath
-      }).done(data => {
-        // 即時実行される
-      })
+
+      const res = await fetch(scriptFilePath, {credentials: 'include'})
+      const body = await res.text()
+      eval(body)
       return false
     }
   })
