@@ -39,13 +39,17 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   // Clipboardに保持されたURLのページタイトルを取得する
   if (cmd === 'get-clipboard-page') {
     const bg = chrome.extension.getBackgroundPage()
-    const input = document.querySelector('#ctrlv')
-    input.value = ''
-    input.focus()
+    const textarea = document.querySelector('#ctrlv')
+    textarea.value = ''
+    textarea.focus()
     bg.document.execCommand('paste')
-    let text = input.value
+    let text = textarea.value
 
-    if (text.match(/^https:\/\/scrapbox\.io\//)) sendResponse(text)
+    if (text.match(/\n/)) return sendResponse(text)
+    if (text.match(/^https?:\/\/scrapbox\.io\//)) return sendResponse(text)
+    if (text.match(/gyazo\.com\//)) return sendResponse(text)
+    if (text.match(/www\.youtube\.com\//)) return sendResponse(text)
+    if (text.match(/www\.google/) && text.match(/\/maps\//)) return sendResponse(text)
     if (text.match(/^https?:\/\//)) {
       fetchPage(text)
       return
