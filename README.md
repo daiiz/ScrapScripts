@@ -3,10 +3,14 @@
 Chrome Extension for [Scrapbox](https://scrapbox.io).
 
 ## Install
-### Chrome Web Store
-- https://chrome.google.com/webstore/detail/scrapscripts/pmpjhaeadhebhjmninnnpikcdogmjgok
+### Download crx file
+- [Download latest version](https://storage.googleapis.com/crx-scrap-scripts/v1.1.8.crx)
+- Visit [chrome://extensions/](chrome://extensions/)
+  - Enable "Developer mode"
+  - Drag & Drop downloaded `crx` file
 
-### GitHub
+
+### Clone from GitHub
 - Clone this repository
 - Run below
   ```
