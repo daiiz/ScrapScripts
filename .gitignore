@@ -1,5 +1,5 @@
 build/*.js
-chrome/build/*.js
+browser/build/*.js
 test/build/*
 node_modules/*
 *.crx

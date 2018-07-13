@@ -7,12 +7,12 @@
   "license": "MIT",
   "scripts": {
     "build": "run-s build:**",
-    "build:babel": "babel client/ --out-dir chrome/build/ --minified --source-maps false",
-    "build:browserify": "browserify -t [ babelify ] src/index.js -o chrome/build/bundle.js -v",
+    "build:babel": "babel client/ --out-dir browser/build/ --minified --source-maps false",
+    "build:browserify": "browserify -t [ babelify ] src/index.js -o browser/build/bundle.js -v",
     "watch": "run-p watch:**",
     "watch:babel": "npm run build:babel -- --watch",
-    "watch:browserify": "watchify -t [ babelify ] src/index.js -o chrome/build/bundle.js -v",
-    "chrome:zip": "zip -r ScrapScript.zip chrome/",
+    "watch:browserify": "watchify -t [ babelify ] src/index.js -o browser/build/bundle.js -v",
+    "browser:zip": "zip -r ScrapScript.zip browser/",
     "test": "run-s test:**",
     "test:standard": "standard --fix src/*.js src/**/*.js"
   },
