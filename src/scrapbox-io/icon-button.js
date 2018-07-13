@@ -3,14 +3,6 @@ const daiizScrapboxManage = require('./manage')
 const installed = daiizScrapboxManage.installed
 const detectProject = daiizScrapboxManage.detectProject
 
-const isChrome = () => {
-  return /Chrome/.test(navigator.userAgent)
-}
-
-const isFirefox = () => {
-  return /Firefox/.test(navigator.userAgent)
-}
-
 exports.enable = () => {
   var $appRoot = $('#app-container')
 
