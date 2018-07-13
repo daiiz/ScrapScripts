@@ -26,31 +26,7 @@ exports.enable = () => {
     // 自分のプロジェクトの管理下のscriptだけ実行できる
     var iconName = $t.attr('title').match(/[^\s/]+-button$/g)
     if (iconName) {
-      var buttonName = iconName[0]
-      var scriptFilePath = `https://scrapbox.io/api/code/${projectName}/${buttonName}/button.js`
-
-      // const res = await fetch(scriptFilePath, {credentials: 'include'})
-      // const body = await res.text()
-      // eval(body)
-      // location.href = `https://scrapbox.io/${projectName}/${buttonName}`
-
-      // $.ajax({
-      //   type: 'GET',
-      //   url: scriptFilePath,
-      //   contentType: 'application/javascript; charset=UTF-8'
-      // }).done(body => {
-      //   const lines = body.split('\n')
-      //   const commands = lines[0]
-      //   if (isChrome() && commands.includes('--eval')) {
-      //     console.warn('chrome', commands)
-      //     eval(body)
-      //   } else if (isFirefox()) {
-      //     eval(body)
-      //   } else {
-      //     // 自動実行される
-      //   }
-      // })
-
+      const scriptFilePath = `https://scrapbox.io/api/code/${projectName}/${iconName[0]}/button.js`
       const xhr = new XMLHttpRequest()
       xhr.open('GET', scriptFilePath)
       xhr.onload = function () {
