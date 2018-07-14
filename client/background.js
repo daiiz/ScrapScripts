@@ -1,5 +1,10 @@
 // background
-window.app = (/Chrome/.test(navigator.userAgent)) ? chrome : browser
+
+const isChrome = () => {
+  return /Chrome/.test(navigator.userAgent)
+}
+
+window.app = isChrome() ? chrome : browser
 
 window.app.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   var cmd = request.command;
@@ -37,27 +42,35 @@ window.app.runtime.onMessage.addListener(function (request, sender, sendResponse
     return;
   }
 
-  // Clipboardに保持されたURLのページタイトルを取得する
+  // Clipboardに保持されたURLのページタイトルを返却する
   if (cmd === 'get-clipboard-page') {
     const bg = window.app.extension.getBackgroundPage()
     const textarea = document.querySelector('#daiiz-ctrlv')
     textarea.value = ''
     textarea.focus()
     bg.document.execCommand('paste')
-    let text = textarea.value
+    resopondWebpageTitleOrRawText(textarea.value, sendResponse)
+  }
 
-    if (text.match(/\n/)) return sendResponse(text)
-    if (text.match(/^https?:\/\/scrapbox\.io\//)) return sendResponse(text)
-    if (text.match(/gyazo\.com\//)) return sendResponse(text)
-    if (text.match(/www\.youtube\.com\//)) return sendResponse(text)
-    if (text.match(/www\.google/) && text.match(/\/maps\//)) return sendResponse(text)
-    if (text.match(/^https?:\/\//)) {
-      fetchPage(text)
-      return
-    }
-    sendResponse(text)
+  // URLのページタイトルを返却する
+  if (cmd === 'fetch-page-title') {
+    const text = request.rawText
+    resopondWebpageTitleOrRawText(text, sendResponse)
   }
 })
+
+const resopondWebpageTitleOrRawText = (text, sendResponse) => {
+  if (text.match(/\n/)) return sendResponse(text)
+  if (text.match(/^https?:\/\/scrapbox\.io\//)) return sendResponse(text)
+  if (text.match(/gyazo\.com\//)) return sendResponse(text)
+  if (text.match(/www\.youtube\.com\//)) return sendResponse(text)
+  if (text.match(/www\.google/) && text.match(/\/maps\//)) return sendResponse(text)
+  if (text.match(/^https?:\/\//)) {
+    fetchPage(text)
+    return
+  }
+  sendResponse(text)
+}
 
 const fetchPage = async (url) => {
   const res = await fetch(url, {
@@ -73,10 +86,23 @@ const fetchPage = async (url) => {
   if (title) externalLink = `[${url} ${title}]`
 
   console.log(externalLink)
-  window.app.tabs.getSelected(null, tab => {
-    window.app.tabs.sendMessage(tab.id, {
+
+  if (isChrome()) {
+    window.app.tabs.getSelected(null, tab => {
+      window.app.tabs.sendMessage(tab.id, {
+        command: 're:get-clipboard-page',
+        externalLink
+      })
+    })
+  } else {
+    // Firefox extension
+    const tab = await window.app.tabs.query({
+      currentWindow: true,
+      active: true
+    })
+    window.app.tabs.sendMessage(tab[0].id, {
       command: 're:get-clipboard-page',
       externalLink
     })
-  })
+  }
 }
