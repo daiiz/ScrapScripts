@@ -40,7 +40,7 @@ window.app.runtime.onMessage.addListener(function (request, sender, sendResponse
   // Clipboardに保持されたURLのページタイトルを取得する
   if (cmd === 'get-clipboard-page') {
     const bg = window.app.extension.getBackgroundPage()
-    const textarea = document.querySelector('#ctrlv')
+    const textarea = document.querySelector('#daiiz-ctrlv')
     textarea.value = ''
     textarea.focus()
     bg.document.execCommand('paste')
