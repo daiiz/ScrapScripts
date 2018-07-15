@@ -1,4 +1,6 @@
 build/*.js
+zip/*
+!zip/.gitkeep
 browser/build/*.js
 test/build/*
 node_modules/*
