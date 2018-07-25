@@ -27,7 +27,8 @@ exports.installed = function (functionName) {
 }
 
 exports.detectProject = function () {
-  var r = window.location.href.match(/scrapbox.io\/([^/.]*)/)
+  const r = window.location.href.match(/scrapbox\.io\/([^/.]*)/)
+    || window.location.href.match(/localhost\:\d+\/([^/.]*)/)
   if (r && r.length >= 2) return encodeURIComponent(r[1])
   return 'daiiz'
 }

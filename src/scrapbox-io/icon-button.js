@@ -18,7 +18,7 @@ exports.enable = () => {
     // 自分のプロジェクトの管理下のscriptだけ実行できる
     var iconName = $t.attr('title').match(/[^\s/]+-button$/g)
     if (iconName) {
-      const scriptFilePath = `https://scrapbox.io/api/code/${projectName}/${iconName[0]}/button.js`
+      const scriptFilePath = `/api/code/${projectName}/${iconName[0]}/button.js`
       const xhr = new XMLHttpRequest()
       xhr.open('GET', scriptFilePath)
       xhr.onload = function () {

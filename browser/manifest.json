@@ -24,7 +24,7 @@
         "run_at": "document_start"
     },
     {
-      "matches": ["*://scrapbox.io/*"],
+      "matches": ["*://scrapbox.io/*", "http://localhost/*"],
       "css": [
         "content_scripts_css/scrapbox-io/main.css"
       ],
