@@ -1,7 +1,6 @@
 const $ = require('jquery')
 const daiizScrapboxManage = require('./manage')
-const installed = daiizScrapboxManage.installed
-const detectProject = daiizScrapboxManage.detectProject
+const {installed, detectProject} = daiizScrapboxManage
 
 var BRACKET_OPEN = '['
 var DOUBLE_BRACKET_OPEN = '[['
@@ -15,8 +14,7 @@ var PROJECT_NAME = null
 var EMPTY_LINKS = []
 
 exports.$getTextBubble = function () {
-  var $textBubble = $(`<div class="daiiz-text-bubble related-page-list
-    daiiz-card daiiz-card-root"></div>`)
+  var $textBubble = $(`<div class="daiiz-text-bubble related-page-list daiiz-card daiiz-card-root"></div>`)
   return $textBubble
 }
 
@@ -191,9 +189,9 @@ var encodeHref = function (url, startsWithHttp) {
     if (pageRowNum) {
       // 行リンク
       var n = pageRowNum[0]
-      pageName = window.encodeURIComponent(pageName.split(n)[0]) + n
+      pageName = encodeURIComponent(pageName.split(n)[0]) + n
     } else {
-      pageName = window.encodeURIComponent(pageName)
+      pageName = encodeURIComponent(pageName)
     }
     return url.replace(tt[2], pageName)
   }
@@ -332,7 +330,7 @@ var makeHashTagLinks = function (row) {
   if (hashTags) {
     for (var i = 0; i < hashTags.length; i++) {
       var hashTag = hashTags[i].trim()
-      var keyword = window.encodeURIComponent(hashTag.substring(1, hashTag.length))
+      var keyword = encodeURIComponent(hashTag.substring(1, hashTag.length))
       var target = (PROJECT_NAME !== detectProject()) ? '_blank' : '_self'
       var a = ` <a href="/${PROJECT_NAME}/${keyword}" class="page-link"
         target="${target}">${spans(hashTag)}</a> `
@@ -418,16 +416,17 @@ exports.$getRefTextBody = function (title, $root, $bubble, projectName) {
     var projectName = tt[1]
     var title = tt[2]
   }
-  title = window.encodeURIComponent(title)
+  title = encodeURIComponent(title)
   PROJECT_NAME = projectName
 
   previewPageText($root, $bubble, title, lineHash)
 }
 
 exports.enable = function () {
-  var $appRoot = $('#app-container')
-  var timer = null
-  var self = this
+  const $appRoot = $('#app-container')
+  const self = this
+  let timer = null
+
   $appRoot.on('mouseenter', 'a.page-link', function (e) {
     var pos = installed('daiiz-text-bubble')
     if (pos === false) return
@@ -450,30 +449,28 @@ exports.enable = function () {
 
     // すでに表示されているならば，何もしない
     if ($(`.daiiz-text-bubble[data-pos="${pos}"]`).length > 0) return
-
     if ($a.attr('rel') && $a.attr('rel') == 'route') {
       $(`.daiiz-text-bubble:not([data-pos="${pos}"])`).remove()
     }
     var keyword = $a[0].innerText
 
-    timer = window.setTimeout(function () {
-      var projectName = detectProject()
+    timer = setTimeout(function () {
+      let projectName = detectProject()
       if ($parentBubble.length > 0) projectName = $parentBubble.attr('data-project')
       self.$getRefTextBody(keyword.trim(), $root, $bubble, projectName)
     }, 650)
   })
 
   $appRoot.on('mouseleave', 'a.page-link', function (e) {
-    window.clearTimeout(timer)
+    clearTimeout(timer)
   })
 
   $appRoot.on('mouseleave', '.daiiz-card', function (e) {
-    var $bubble = $('.daiiz-card')
-    window.clearTimeout(timer)
+    clearTimeout(timer)
   })
 
   $appRoot.on('click', function (e) {
-    window.clearTimeout(timer)
+    clearTimeout(timer)
     var $bubble = $('.daiiz-card')
     var $t = $(e.target).closest('.daiiz-card')
     if ($(e.target)[0].tagName.toLowerCase() === 'a') {
@@ -485,4 +482,3 @@ exports.enable = function () {
     }
   })
 }
-/* ================ */
