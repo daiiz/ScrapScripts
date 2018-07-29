@@ -6,7 +6,7 @@ const detectProject = daiizScrapboxManage.detectProject
 exports.enable = () => {
   var $appRoot = $('#app-container')
 
-  $appRoot.on('click', 'img.icon', function (e) {
+  $appRoot.on('click', 'img.icon', e => {
     if (!installed('daiiz-icon-button')) return
     var projectName = detectProject()
 
@@ -18,7 +18,7 @@ exports.enable = () => {
     // 自分のプロジェクトの管理下のscriptだけ実行できる
     var iconName = $t.attr('title').match(/[^\s/]+-button$/g)
     if (iconName) {
-      const scriptFilePath = `/api/code/${projectName}/${iconName[0]}/button.js`
+      const scriptFilePath = `${location.origin}/api/code/${projectName}/${iconName[0]}/button.js`
       const xhr = new XMLHttpRequest()
       xhr.open('GET', scriptFilePath)
       xhr.onload = function () {
