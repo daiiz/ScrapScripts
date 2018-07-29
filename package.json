@@ -14,7 +14,7 @@
     "watch:browserify": "watchify -t [ babelify ] src/index.js -o browser/build/bundle.js -v",
     "zip": "run-s zip:**",
     "zip:chrome": "zip -r -FS ./zip/chrome.zip browser/",
-    "zip:firefox": "zip -r -FS ./zip/firefox.zip browser/",
+    "zip:firefox": "sh zip-firefox.sh",
     "test": "run-s test:**",
     "test:standard": "standard --fix src/*.js src/**/*.js"
   },
