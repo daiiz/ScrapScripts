@@ -4,12 +4,12 @@ Unofficial browser extension for [Scrapbox](https://scrapbox.io).
 
 ## Install from extension store
 ### Chrome Extension
-[ScrapScripts for Chrome](https://chrome.google.com/webstore/detail/scrapscripts/pmpjhaeadhebhjmninnnpikcdogmjgok)
+- [ScrapScripts for Chrome](https://chrome.google.com/webstore/detail/scrapscripts/pmpjhaeadhebhjmninnnpikcdogmjgok)
 
 ### Firefox Add-on
-[ScrapScripts for Firefox](https://addons.mozilla.org/ja/firefox/addon/scrap-scripts/)
+- [ScrapScripts for Firefox](https://addons.mozilla.org/ja/firefox/addon/scrap-scripts/)
 
-### Clone from GitHub
+## Clone from GitHub
 - Clone this repository
 - Run below
   ```
