@@ -10,14 +10,14 @@ Unofficial browser extension for [Scrapbox](https://scrapbox.io).
 - [ScrapScripts for Firefox](https://addons.mozilla.org/ja/firefox/addon/scrap-scripts/)
 
 ## Clone from GitHub
-- Clone this repository
-- Run below
+1. Clone this repository
+2. Run below
   ```
   $ cd ScrapScripts/
   $ npm install
   $ npm run build
   ```
-- Launch Chrome and open chrome://extensions/, then load the unpackaged extension: `browser/`
+3. Launch Chrome and open chrome://extensions/, then load the unpackaged extension: `browser/`
 
 ## Features
 - Bubbles
