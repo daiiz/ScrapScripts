@@ -41,7 +41,6 @@ const execPasteFirefox = async () => {
   // 拡張機能用のtextareaを生成してbody末尾に挿入
   // const a = await navigator.clipboard.readText();
   const textInput = document.querySelector("#text-input");
-  textInput.disabled = true;
 
   let textarea = document.querySelector("textarea#daiiz-ctrlv");
   if (!textarea) {
@@ -69,7 +68,9 @@ const execPasteFirefox = async () => {
   textarea.value = "";
   textarea.focus();
   document.addEventListener("paste", onPaste, false);
+  textInput.disabled = true;
   document.execCommand("paste");
+  textInput.disabled = false;
   document.removeEventListener("paste", onPaste, false);
   textarea.remove();
 };
