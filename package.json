@@ -15,8 +15,7 @@
     "zip": "run-s zip:**",
     "zip:chrome": "zip -r -FS ./zip/chrome.zip browser/",
     "zip:firefox": "sh zip-firefox.sh",
-    "test": "run-s test:**",
-    "test:standard": "standard --fix src/*.js src/**/*.js"
+    "test": "run-s test:**"
   },
   "dependencies": {
     "babel-cli": "^6.24.1",

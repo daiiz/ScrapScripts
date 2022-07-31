@@ -1,57 +1,52 @@
 {
   "background": {
-    "page": "background.html"
+    "service_worker": "./build/serviceworker.js",
+    "type": "module"
   },
-  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'; connect-src * data: blob:;",
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; connect-src * data: blob:;"
+  },
   "options_ui": {
     "page": "options.html"
   },
   "description": "Unofficial browser extension for Scrapbox",
   "icons": {
     "128": "icon.png",
-    "48" : "icon.png",
-    "16" : "icon.png"
+    "48": "icon.png",
+    "16": "icon.png"
   },
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "ScrapScripts",
 
   "content_scripts": [
     {
-        "matches": ["<all_urls>"],
-        "js": [
-            "build/bundle.js"
-        ],
-        "run_at": "document_start"
+      "matches": ["<all_urls>"],
+      "js": ["build/bundle.js"],
+      "run_at": "document_start"
     },
     {
       "matches": ["*://scrapbox.io/*", "http://localhost/*"],
-      "css": [
-        "content_scripts_css/scrapbox-io/main.css"
-      ],
-      "js": [
-          "build/scrapbox-io.js"
-      ],
+      "css": ["content_scripts_css/scrapbox-io/main.css"],
+      "js": ["build/scrapbox-io.js"],
       "run_at": "document_end"
     },
     {
       "matches": ["*://gyazo.com/*"],
-      "css": [
-        "content_scripts_css/scrapbox-io/main.css"
-      ],
-      "js": [
-        "build/gyazo-com.js"
-      ],
+      "css": ["content_scripts_css/scrapbox-io/main.css"],
+      "js": ["build/gyazo-com.js"],
       "run_at": "document_end"
     }
   ],
 
   "permissions": [
-      "contextMenus",
-      "tabs",
-      "activeTab",
-      "clipboardRead",
-      "<all_urls>"
+    "contextMenus",
+    "tabs",
+    "activeTab",
+    "clipboardRead",
+    "storage"
   ],
+
+  "host_permissions": ["*://*/*"],
 
   "version": "1.2.2"
 }
