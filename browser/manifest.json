@@ -38,7 +38,15 @@
     }
   ],
 
-  "permissions": ["contextMenus", "tabs", "activeTab", "clipboardRead"],
+  "permissions": [
+    "contextMenus",
+    "tabs",
+    "activeTab",
+    "clipboardRead",
+    "storage"
+  ],
+
+  "host_permissions": ["*://*/*"],
 
   "version": "1.2.2"
 }
