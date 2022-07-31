@@ -6,7 +6,11 @@ const isChrome = () => {
 
 const app = isChrome() ? chrome : browser;
 
-app.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+app.runtime.onMessage.addListener(async function (
+  request,
+  sender,
+  sendResponse
+) {
   const cmd = request.command;
 
   // 外部サイトで発動する機能を有効にする
@@ -65,11 +69,11 @@ app.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (cmd === "fetch-page-title") {
     const text = request.rawText;
     console.log("#", "fetch-page-title", text);
-    resopondWebpageTitleOrRawText(text, sendResponse);
+    await resopondWebpageTitleOrRawText(text, sendResponse);
   }
 });
 
-const resopondWebpageTitleOrRawText = (text, sendResponse) => {
+const resopondWebpageTitleOrRawText = async (text, sendResponse) => {
   if (text.match(/\n/)) {
     return sendResponse(text);
   }
@@ -86,22 +90,30 @@ const resopondWebpageTitleOrRawText = (text, sendResponse) => {
     return sendResponse(text);
   }
   if (text.match(/^https?:\/\//)) {
-    fetchPage(text);
+    const tabs = await app.tabs.query({ currentWindow: true, active: true });
+    try {
+      await fetchPage(text, tabs);
+    } catch (err) {
+      console.error(err);
+      // textarea#text-inputをブロックしており、解除する必要があるので必ず応答を返す
+      app.tabs.sendMessage(tabs[0].id, {
+        command: "re:get-clipboard-page",
+        externalLink: text,
+      });
+    }
     return;
   }
   return sendResponse(text);
 };
 
-const fetchPage = async (url) => {
-  const tabs = await app.tabs.query({ currentWindow: true, active: true });
-
+const fetchPage = async (url, tabs) => {
   const res = await fetch(url, { credentials: "include" });
-  if (!res.ok || tabs.length === 0) {
+  if (!res.ok) {
+    throw new Error("Failed to fetch page.");
   }
   const body = await res.text();
   // const parser = new DOMParser();
   // const doc = parser.parseFromString(body, "text/html");
-  console.log("[fetchPage]", body);
 
   // DOMParserを使えないので文字列操作でtitleを取り出す
   let externalLink = url;
@@ -112,11 +124,21 @@ const fetchPage = async (url) => {
     substr = substr.split("<title>")[1];
   }
   if (substr) {
-    title = substr.trim();
+    title = substr
+      .trim()
+      .split("\n")
+      .filter((x) => !!x.trim())
+      .join("");
+    console.log("[fetchPage]", title);
   }
   if (title) {
     externalLink = `[${url} ${title}]`;
   }
+
+  app.tabs.sendMessage(tabs[0].id, {
+    command: "re:get-clipboard-page",
+    externalLink,
+  });
 
   // if (isChrome()) {
   //   window.app.tabs.getSelected(null, (tab) => {

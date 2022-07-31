@@ -9,24 +9,41 @@ const keys = {
   v: 86,
 };
 
-// const execPasteChrome = () => {
-//   // background scriptに処理を依頼する
-//   window.app.runtime.sendMessage(
-//     {
-//       command: "get-clipboard-page",
-//     },
-//     (text) => {
-//       if (!text) return;
-//       insertTextToScrapboxCursor(text);
-//     }
-//   );
-// };
+const execPasteChrome = () => {
+  const iframe = document.createElement("iframe");
+  iframe.src = "./"; //chrome.runtime.getURL("sandbox.html");
+  // document.body.appendChild(iframe);
+  iframe.onload = () => {
+    const msg = { command: "hello" };
+    iframe.contentWindow.postMessage(msg, "*");
+  };
+  iframe.onerror = () => {
+    console.log("error!!!!!!!");
+  };
+  iframe.onMessage = (event) => {
+    console.log("event..........", event);
+  };
+  // background scriptに処理を依頼する
+  // window.app.runtime.sendMessage(
+  //   {
+  //     command: "get-clipboard-page",
+  //   },
+  //   (text) => {
+  //     if (!text) return;
+  //     // insertTextToScrapboxCursor(text);
+  //   }
+  // );
+};
 
 // Clipboardに保持されたURLのページタイトルを返却する
 const execPasteFirefox = async () => {
   // background scriptに処理を依頼できない
   // 拡張機能用のtextareaを生成してbody末尾に挿入
-  let textarea = document.querySelector("#daiiz-ctrlv");
+  // const a = await navigator.clipboard.readText();
+  const textInput = document.querySelector("#text-input");
+  textInput.disabled = true;
+
+  let textarea = document.querySelector("textarea#daiiz-ctrlv");
   if (!textarea) {
     textarea = document.createElement("textarea");
     textarea.setAttribute("id", "daiiz-ctrlv");
@@ -37,6 +54,17 @@ const execPasteFirefox = async () => {
   let rawText;
   const onPaste = (event) => {
     rawText = event.clipboardData.getData("text/plain");
+    // fetch APIの実行してtextを解決する処理はbackground scriptに依頼する
+    const payload = {
+      command: "fetch-page-title",
+      rawText,
+    };
+    window.app.runtime.sendMessage(payload, (text) => {
+      if (!text) {
+        return;
+      }
+      insertTextToScrapboxCursor(text);
+    });
   };
   textarea.value = "";
   textarea.focus();
@@ -44,24 +72,12 @@ const execPasteFirefox = async () => {
   document.execCommand("paste");
   document.removeEventListener("paste", onPaste, false);
   textarea.remove();
-  // fetch APIの実行してtextを解決する処理はbackground scriptに依頼する
-  window.app.runtime.sendMessage(
-    {
-      command: "fetch-page-title",
-      rawText,
-    },
-    (text) => {
-      if (!text) {
-        return;
-      }
-      insertTextToScrapboxCursor(text);
-    }
-  );
 };
 
 const insertTextToScrapboxCursor = (text) => {
   // Scrapboxで入力を待ち受けているtextarea要素
   const textInput = document.querySelector("#text-input");
+  textInput.disabled = false;
   if (isChrome()) {
     textInput.focus();
     document.execCommand("insertText", false, text);
@@ -83,13 +99,17 @@ exports.enable = () => {
 
   $(window).on("keydown", (event) => {
     const key = installed("daiiz-paste-url-title");
-    if (!key) return;
+    if (!key) {
+      return;
+    }
     const { keyCode } = event;
     if (keyCode === keys[key]) c = 1;
   });
 
   $(window).on("keydown", (event) => {
-    if (!installed("daiiz-paste-url-title")) return;
+    if (!installed("daiiz-paste-url-title")) {
+      return;
+    }
     const { keyCode } = event;
     if (keyCode !== keys.v || c !== 1) {
       return;
@@ -98,7 +118,6 @@ exports.enable = () => {
     event.stopPropagation();
 
     if (isChrome()) {
-      // execPasteChrome();
       execPasteFirefox();
     } else if (isFirefox()) {
       execPasteFirefox();
@@ -111,7 +130,6 @@ exports.enable = () => {
 
   window.app.runtime.onMessage.addListener((request, sender, sendResponse) => {
     const { command, externalLink } = request;
-
     if (command === "re:get-clipboard-page") {
       insertTextToScrapboxCursor(externalLink);
     }
