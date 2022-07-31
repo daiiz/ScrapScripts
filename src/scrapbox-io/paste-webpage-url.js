@@ -9,37 +9,10 @@ const keys = {
   v: 86,
 };
 
-const execPasteChrome = () => {
-  const iframe = document.createElement("iframe");
-  iframe.src = "./"; //chrome.runtime.getURL("sandbox.html");
-  // document.body.appendChild(iframe);
-  iframe.onload = () => {
-    const msg = { command: "hello" };
-    iframe.contentWindow.postMessage(msg, "*");
-  };
-  iframe.onerror = () => {
-    console.log("error!!!!!!!");
-  };
-  iframe.onMessage = (event) => {
-    console.log("event..........", event);
-  };
-  // background scriptに処理を依頼する
-  // window.app.runtime.sendMessage(
-  //   {
-  //     command: "get-clipboard-page",
-  //   },
-  //   (text) => {
-  //     if (!text) return;
-  //     // insertTextToScrapboxCursor(text);
-  //   }
-  // );
-};
-
 // Clipboardに保持されたURLのページタイトルを返却する
 const execPasteFirefox = async () => {
   // background scriptに処理を依頼できない
   // 拡張機能用のtextareaを生成してbody末尾に挿入
-  // const a = await navigator.clipboard.readText();
   const textInput = document.querySelector("#text-input");
 
   let textarea = document.querySelector("textarea#daiiz-ctrlv");
