@@ -52,11 +52,12 @@ app.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   // Clipboardに保持されたURLのページタイトルを返却する
   if (cmd === "get-clipboard-page") {
     console.log("[get-clipboard-page]");
-    const bg = window.app.extension.getBackgroundPage();
-    const textarea = document.querySelector("#daiiz-ctrlv");
-    textarea.value = "";
-    textarea.focus();
-    bg.document.execCommand("paste");
+
+    // const bg = window.app.extension.getBackgroundPage();
+    // const textarea = document.querySelector("#daiiz-ctrlv");
+    // textarea.value = "";
+    // textarea.focus();
+    // bg.document.execCommand("paste");
     // resopondWebpageTitleOrRawText(textarea.value, sendResponse);
   }
 
