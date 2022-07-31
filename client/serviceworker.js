@@ -55,24 +55,8 @@ app.runtime.onMessage.addListener(async function (
     console.log("[get-project-name]");
     const tabs = await app.tabs.query({ currentWindow: true, active: true });
     const funcNames = request.func_names;
-    // const projectNames = Object.create(null);
-    // for (let i = 0; i < funcNames.length; i++) {
-    //   const funcName = funcNames[i];
-    //   if (localStorage[funcName]) {
-    //     projectNames[funcName] = localStorage[funcName];
-    //   }
-    // }
-    // const projectNames = new Promise((resolve, reject) => {
-    //   const pNames = Object.create(null);
-    //   app.storage.local.get(funcNames, (res) => {
-    //     for (const funcName of Object.keys(res)) {
-    //       pNames[funcName] = res[funcName];
-    //     }
-    //     resolve(pNames);
-    //   });
-    // });
+
     const projectNames = await getStorageValues(funcNames);
-    console.log("...1.", projectNames);
     app.tabs.sendMessage(tabs[0].id, {
       command: "re:get-project-name",
       projectNames,
