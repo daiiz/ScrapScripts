@@ -38,13 +38,7 @@
     }
   ],
 
-  "permissions": [
-    "contextMenus",
-    "tabs",
-    "activeTab",
-    "clipboardRead",
-    "<all_urls>"
-  ],
+  "permissions": ["contextMenus", "tabs", "activeTab", "clipboardRead"],
 
   "version": "1.2.2"
 }
