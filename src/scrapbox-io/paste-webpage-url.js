@@ -9,19 +9,20 @@ const keys = {
   v: 86,
 };
 
-const execPasteChrome = () => {
-  // background scriptに処理を依頼する
-  window.app.runtime.sendMessage(
-    {
-      command: "get-clipboard-page",
-    },
-    (text) => {
-      if (!text) return;
-      insertTextToScrapboxCursor(text);
-    }
-  );
-};
+// const execPasteChrome = () => {
+//   // background scriptに処理を依頼する
+//   window.app.runtime.sendMessage(
+//     {
+//       command: "get-clipboard-page",
+//     },
+//     (text) => {
+//       if (!text) return;
+//       insertTextToScrapboxCursor(text);
+//     }
+//   );
+// };
 
+// Clipboardに保持されたURLのページタイトルを返却する
 const execPasteFirefox = async () => {
   // background scriptに処理を依頼できない
   // 拡張機能用のtextareaを生成してbody末尾に挿入
@@ -50,7 +51,9 @@ const execPasteFirefox = async () => {
       rawText,
     },
     (text) => {
-      if (!text) return;
+      if (!text) {
+        return;
+      }
       insertTextToScrapboxCursor(text);
     }
   );

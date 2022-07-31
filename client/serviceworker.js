@@ -49,22 +49,91 @@ app.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     return;
   }
 
+  // 廃止
   // Clipboardに保持されたURLのページタイトルを返却する
-  if (cmd === "get-clipboard-page") {
-    console.log("[get-clipboard-page]");
-
-    // const bg = window.app.extension.getBackgroundPage();
-    // const textarea = document.querySelector("#daiiz-ctrlv");
-    // textarea.value = "";
-    // textarea.focus();
-    // bg.document.execCommand("paste");
-    // resopondWebpageTitleOrRawText(textarea.value, sendResponse);
-  }
+  // if (cmd === "get-clipboard-page") {
+  //   console.log("[get-clipboard-page]");
+  //   // const bg = window.app.extension.getBackgroundPage();
+  //   // const textarea = document.querySelector("#daiiz-ctrlv");
+  //   // textarea.value = "";
+  //   // textarea.focus();
+  //   // bg.document.execCommand("paste");
+  //   // resopondWebpageTitleOrRawText(textarea.value, sendResponse);
+  // }
 
   // URLのページタイトルを返却する
   if (cmd === "fetch-page-title") {
-    console.log("#", "fetch-page-title");
     const text = request.rawText;
-    // resopondWebpageTitleOrRawText(text, sendResponse);
+    console.log("#", "fetch-page-title", text);
+    resopondWebpageTitleOrRawText(text, sendResponse);
   }
 });
+
+const resopondWebpageTitleOrRawText = (text, sendResponse) => {
+  if (text.match(/\n/)) {
+    return sendResponse(text);
+  }
+  if (text.match(/^https?:\/\/scrapbox\.io\//)) {
+    return sendResponse(text);
+  }
+  if (text.match(/gyazo\.com\//)) {
+    return sendResponse(text);
+  }
+  if (text.match(/www\.youtube\.com\//)) {
+    return sendResponse(text);
+  }
+  if (text.match(/www\.google/) && text.match(/\/maps\//)) {
+    return sendResponse(text);
+  }
+  if (text.match(/^https?:\/\//)) {
+    fetchPage(text);
+    return;
+  }
+  return sendResponse(text);
+};
+
+const fetchPage = async (url) => {
+  const tabs = await app.tabs.query({ currentWindow: true, active: true });
+
+  const res = await fetch(url, { credentials: "include" });
+  if (!res.ok || tabs.length === 0) {
+  }
+  const body = await res.text();
+  // const parser = new DOMParser();
+  // const doc = parser.parseFromString(body, "text/html");
+  console.log("[fetchPage]", body);
+
+  // DOMParserを使えないので文字列操作でtitleを取り出す
+  let externalLink = url;
+  let title = "";
+
+  let substr = body.split("</title>")[0];
+  if (substr) {
+    substr = substr.split("<title>")[1];
+  }
+  if (substr) {
+    title = substr.trim();
+  }
+  if (title) {
+    externalLink = `[${url} ${title}]`;
+  }
+
+  // if (isChrome()) {
+  //   window.app.tabs.getSelected(null, (tab) => {
+  //     window.app.tabs.sendMessage(tab.id, {
+  //       command: "re:get-clipboard-page",
+  //       externalLink,
+  //     });
+  //   });
+  // } else {
+  //   // Firefox extension
+  //   const tab = await window.app.tabs.query({
+  //     currentWindow: true,
+  //     active: true,
+  //   });
+  //   window.app.tabs.sendMessage(tab[0].id, {
+  //     command: "re:get-clipboard-page",
+  //     externalLink,
+  //   });
+  // }
+};
