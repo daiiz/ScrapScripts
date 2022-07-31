@@ -6,6 +6,18 @@ const isChrome = () => {
 
 const app = isChrome() ? chrome : browser;
 
+const getStorageValues = (keys = []) => {
+  return new Promise((resolve, reject) => {
+    const values = Object.create(null);
+    app.storage.local.get(keys, (res) => {
+      for (const key of Object.keys(res)) {
+        values[key] = res[key];
+      }
+      resolve(values);
+    });
+  });
+};
+
 app.runtime.onMessage.addListener(async function (
   request,
   sender,
@@ -41,15 +53,30 @@ app.runtime.onMessage.addListener(async function (
   // 設定された値を返す
   if (cmd === "get-project-name") {
     console.log("[get-project-name]");
+    const tabs = await app.tabs.query({ currentWindow: true, active: true });
     const funcNames = request.func_names;
-    const projectNames = {};
-    for (let i = 0; i < funcNames.length; i++) {
-      const funcName = funcNames[i];
-      if (localStorage[funcName]) {
-        projectNames[funcName] = localStorage[funcName];
-      }
-    }
-    sendResponse(projectNames);
+    // const projectNames = Object.create(null);
+    // for (let i = 0; i < funcNames.length; i++) {
+    //   const funcName = funcNames[i];
+    //   if (localStorage[funcName]) {
+    //     projectNames[funcName] = localStorage[funcName];
+    //   }
+    // }
+    // const projectNames = new Promise((resolve, reject) => {
+    //   const pNames = Object.create(null);
+    //   app.storage.local.get(funcNames, (res) => {
+    //     for (const funcName of Object.keys(res)) {
+    //       pNames[funcName] = res[funcName];
+    //     }
+    //     resolve(pNames);
+    //   });
+    // });
+    const projectNames = await getStorageValues(funcNames);
+    console.log("...1.", projectNames);
+    app.tabs.sendMessage(tabs[0].id, {
+      command: "re:get-project-name",
+      projectNames,
+    });
     return;
   }
 
@@ -112,8 +139,6 @@ const fetchPage = async (url, tabs) => {
     throw new Error("Failed to fetch page.");
   }
   const body = await res.text();
-  // const parser = new DOMParser();
-  // const doc = parser.parseFromString(body, "text/html");
 
   // DOMParserを使えないので文字列操作でtitleを取り出す
   let externalLink = url;
@@ -139,23 +164,4 @@ const fetchPage = async (url, tabs) => {
     command: "re:get-clipboard-page",
     externalLink,
   });
-
-  // if (isChrome()) {
-  //   window.app.tabs.getSelected(null, (tab) => {
-  //     window.app.tabs.sendMessage(tab.id, {
-  //       command: "re:get-clipboard-page",
-  //       externalLink,
-  //     });
-  //   });
-  // } else {
-  //   // Firefox extension
-  //   const tab = await window.app.tabs.query({
-  //     currentWindow: true,
-  //     active: true,
-  //   });
-  //   window.app.tabs.sendMessage(tab[0].id, {
-  //     command: "re:get-clipboard-page",
-  //     externalLink,
-  //   });
-  // }
 };
