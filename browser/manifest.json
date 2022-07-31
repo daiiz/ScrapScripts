@@ -1,6 +1,6 @@
 {
   "background": {
-    "service_worker": "./build/background.js",
+    "service_worker": "./build/serviceworker.js",
     "type": "module"
   },
   "content_security_policy": {
