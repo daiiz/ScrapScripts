@@ -64,18 +64,6 @@ app.runtime.onMessage.addListener(async function (
     return;
   }
 
-  // 廃止
-  // Clipboardに保持されたURLのページタイトルを返却する
-  // if (cmd === "get-clipboard-page") {
-  //   console.log("[get-clipboard-page]");
-  //   // const bg = window.app.extension.getBackgroundPage();
-  //   // const textarea = document.querySelector("#daiiz-ctrlv");
-  //   // textarea.value = "";
-  //   // textarea.focus();
-  //   // bg.document.execCommand("paste");
-  //   // resopondWebpageTitleOrRawText(textarea.value, sendResponse);
-  // }
-
   // URLのページタイトルを返却する
   if (cmd === "fetch-page-title") {
     const text = request.rawText;
