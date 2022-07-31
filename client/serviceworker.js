@@ -6,10 +6,56 @@ const isChrome = () => {
 
 const app = isChrome() ? chrome : browser;
 
-console.log(app);
-console.log(app.tabs);
+app.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  const cmd = request.command;
 
-console.log(app.runtime.onMessage.addListener);
-console.log(app.tabs.getSelected);
-console.log(app.tabs.query);
-console.log(app.tabs.sendMessage);
+  // 外部サイトで発動する機能を有効にする
+  if (cmd === "enable-daiiz-script") {
+    const funcProjectPairs = request.func_project_pairs;
+    const funcNames = Object.keys(funcProjectPairs);
+    for (let i = 0; i < funcNames.length; i++) {
+      const funcName = funcNames[i];
+      const projectName = funcProjectPairs[funcName];
+
+      if (!funcName || funcName.length === 0) {
+        return;
+      }
+      if (!projectName || projectName.length === 0) {
+        localStorage.removeItem(funcName);
+      } else if (projectName.length > 0) {
+        localStorage[funcName] = projectName;
+      }
+    }
+    return;
+  }
+
+  // 設定された値を返す
+  if (cmd === "get-project-name") {
+    const funcNames = request.func_names;
+    const projectNames = {};
+    for (let i = 0; i < funcNames.length; i++) {
+      const funcName = funcNames[i];
+      if (localStorage[funcName]) {
+        projectNames[funcName] = localStorage[funcName];
+      }
+    }
+    sendResponse(projectNames);
+    return;
+  }
+
+  // Clipboardに保持されたURLのページタイトルを返却する
+  if (cmd === "get-clipboard-page") {
+    const bg = window.app.extension.getBackgroundPage();
+    const textarea = document.querySelector("#daiiz-ctrlv");
+    textarea.value = "";
+    textarea.focus();
+    bg.document.execCommand("paste");
+    // resopondWebpageTitleOrRawText(textarea.value, sendResponse);
+  }
+
+  // URLのページタイトルを返却する
+  if (cmd === "fetch-page-title") {
+    const text = request.rawText;
+    // resopondWebpageTitleOrRawText(text, sendResponse);
+  }
+});
